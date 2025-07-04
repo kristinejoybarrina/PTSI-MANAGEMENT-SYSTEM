@@ -99,7 +99,7 @@
   
         if (!snapshot.empty) {
           const userData = snapshot.docs[0].data();
-          usernameElement.textContent = userData.firstname || savedUsername;
+          usernameElement.textContent = userData.username || savedUsername;
   
           // ✅ SHOW the uploaded profile image
           if (userData.imageBase64?.startsWith("data:image")) {
