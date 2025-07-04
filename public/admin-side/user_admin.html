@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Admin</title>
-    <link rel="stylesheet" href="../assets/css/user_edit_admin.css">
+    <link rel="stylesheet" href="../assets/css/user_admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -56,211 +56,159 @@
             </div>
         </div>
     
+    <h1><br>Registered User Accounts</h1>
 
-    <form id="editUserForm">
-        <a href="user_admin.html" class="back-icon">
-            <img src="../assets/img/back-icon.png" alt="Back" />
-        </a>
-        <h1>Edit User</h1>
-        <label>First Name:
-        <input type="text" id="firstname" name="firstname" required />
-        </label><br/>
-        <label>Last Name:
-        <input type="text" id="lastname" name="lastname" required />
-        </label><br/>
-        <label>Email:
-        <input type="email" id="email" name="email" required />
-        </label><br/>
-        <label>Phone:
-        <input type="text" id="phone" name="phone" />
-        </label><br/>
-        <label>Middlename:
-            <input type="text" id="middlename" name="middlename" />
-        </label><br/>
+        <div class="user-account-container">
+        <button class="add-user-btn">Add New User</button>
         
-        <label>Suffix:
-        <input type="text" id="suffix" name="suffix" />
-        </label><br/>
-        
-        <label for="age">
-            Age:
-            <input type="number" id="age" name="age" />
-          </label><br/>
-          
-          <label for="gender">
-            Gender:
-            <select id="gender" name="gender">
-              <option value="">Select</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Prefer Not to Say">Prefer Not to Say</option>
-            </select>
-          </label><br/>
-                 
-        
-        <label>Street:
-        <input type="text" id="street" name="street" />
-        </label><br/>
-        
-        <label>Region:
-        <input type="text" id="region" name="region" />
-        </label><br/>
-        
-        <label>Province:
-        <input type="text" id="province" name="province" />
-        </label><br/>
-        
-        <label>City:
-        <input type="text" id="city" name="city" />
-        </label><br/>
-        
-        <label>Barangay:
-        <input type="text" id="barangay" name="barangay" />
-        </label><br/>
-        
-        <label>Emergency Contact Name:
-        <input type="text" id="emergencyName" name="emergencyName" />
-        </label><br/>
-        
-        <label>Relationship:
-        <input type="text" id="relationship" name="relationship" />
-        </label><br/>
-        
-        <label>Emergency Number:
-        <input type="text" id="emergencyNumber" name="emergencyNumber" />
-        </label><br/>
-        
-        <label>Username:
-        <input type="text" id="username" name="username" />
-        </label><br/>            
-        <div class="form-button-container">
-            <button type="submit">Update User</button>
-          </div>
-    </form>
+        <input type="text" class="search-bar" placeholder="Search users by name or email...">
+
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Registration Date</th>
+                    <th>Last Update</th> 
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
     <script src="../assets/js/menu.js"></script>
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import {
-          getFirestore,
-          doc,
-          getDoc,
-          updateDoc,
-          serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        deleteDoc,
+        doc
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    
+      const firebaseConfig = {
+        apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+        authDomain: "ptsi-system-293aa.firebaseapp.com",
+        projectId: "ptsi-system-293aa",
+        storageBucket: "ptsi-system-293aa.firebasestorage.app",
+        messagingSenderId: "229290736029",
+        appId: "1:229290736029:web:da2246786b173fddcd1774",
+        measurementId: "G-2CEM231Z6K"
+      };
+    
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+    
+      let allUsers = [];
+    
+      async function fetchUsers() {
+        const snapshot = await getDocs(collection(db, "registrationForm"));
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      }
+    
+      function renderUsers(users) {
+        const tbody = document.querySelector(".user-table tbody");
+        tbody.innerHTML = "";
       
-        const firebaseConfig = {
-          apiKey: "AIzaSyDA_dVWeUjfgWTJHTIkIomj6ALtD_Lre6g",
-          authDomain: "ptsi-project-48025.firebaseapp.com",
-          projectId: "ptsi-project-48025",
-          storageBucket: "ptsi-project-48025.appspot.com",
-          messagingSenderId: "761002258561",
-          appId: "1:761002258561:web:1fce70be6b73c1b628dd80"
-        };
-      
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-      
-        const userId = localStorage.getItem("editingUserId");
-        const form = document.getElementById("editUserForm");
-      
-        if (!userId) {
-          alert("No user selected for editing.");
-          window.location.href = "user_admin.html";
+        if (users.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5">No users found</td></tr>`;
+          return;
         }
       
-        async function populateForm() {
-          const docRef = doc(db, "registrationForm", userId);
-          const snapshot = await getDoc(docRef);
-      
-          if (snapshot.exists()) {
-            const userData = snapshot.data();
-            form.firstname.value = userData.firstname || "";
-            form.lastname.value = userData.lastname || "";
-            form.middlename.value = userData.middlename || "";
-            form.suffix.value = userData.suffix || "";
-            form.email.value = userData.email || "";
-            form.age.value = userData.age || "";
-            form.gender.value = userData.gender || "";
-            form.phone.value = userData.phone || "";
-            form.street.value = userData.street || "";
-            form.region.value = userData.region || "";
-            form.province.value = userData.province || "";
-            form.city.value = userData.city || "";
-            form.barangay.value = userData.barangay || "";
-            form.emergencyName.value = userData.emergencyName || "";
-            form.relationship.value = userData.relationship || "";
-            form.emergencyNumber.value = userData.emergencyNumber || "";
-            form.username.value = userData.username || "";
-          } else {
-            alert("User not found.");
-            window.location.href = "user_admin.html";
-          }
-        }
-      
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
-      
-          const updatedData = {
-            firstname: form.firstname.value,
-            lastname: form.lastname.value,
-            middlename: form.middlename.value,
-            suffix: form.suffix.value,
-            email: form.email.value,
-            age: form.age.value,
-            gender: form.gender.value,
-            phone: form.phone.value,
-            street: form.street.value,
-            region: form.region.value,
-            province: form.province.value,
-            city: form.city.value,
-            barangay: form.barangay.value,
-            emergencyName: form.emergencyName.value,
-            relationship: form.relationship.value,
-            emergencyNumber: form.emergencyNumber.value,
-            username: form.username.value,
-            lastUpdated: serverTimestamp()
-          };
-      
-          try {
-            await updateDoc(doc(db, "registrationForm", userId), updatedData);
-            alert("User updated successfully!");
-            window.location.href = "user_admin.html";
-          } catch (error) {
-            console.error("Error updating user:", error);
-            alert("Failed to update user.");
-          }
+        // 🔤 Sort users by LASTNAME alphabetically
+        users.sort((a, b) => {
+          const lnameA = (a.lastname || "").toUpperCase();
+          const lnameB = (b.lastname || "").toUpperCase();
+          return lnameA.localeCompare(lnameB);
         });
       
-        // ✅ Reset password button logic
-        document.addEventListener("DOMContentLoaded", () => {
-          const resetBtn = document.createElement("button");
-          resetBtn.type = "button";
-          resetBtn.id = "resetPasswordBtn";
-          resetBtn.textContent = "Reset Password";
-          resetBtn.style.marginLeft = "10px";
-          document.querySelector(".form-button-container").appendChild(resetBtn);
+        users.forEach(user => {
+          const fullName = `${(user.lastname || "").toUpperCase()}, ${(user.firstname || "").toUpperCase()}`;
+          const row = `
+            <tr>
+              <td>${user.id}</td>
+              <td>${fullName}</td>
+              <td>${user.email || ""}</td>
+              <td>${formatDate(user.registrationDate)}</td>
+              <td>${formatDate(user.lastUpdated)}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="edit-btn" data-id="${user.id}">Edit</button>
+                  <button class="delete-btn" data-id="${user.id}">Delete</button>
+                </div>
+              </td>
+            </tr>`;
+          tbody.insertAdjacentHTML("beforeend", row);
+        });
+      }
       
-          resetBtn.addEventListener("click", async () => {
-            const confirmReset = confirm("Reset password to 'default123'?");
-            if (!confirmReset) return;
-      
-            try {
-              await updateDoc(doc(db, "registrationForm", userId), {
-                password: "default123",
-                lastUpdated: serverTimestamp()
-              });
-              alert("Password reset to 'default123'");
-            } catch (error) {
-              console.error("Failed to reset password:", error);
-              alert("Failed to reset password.");
+    
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          allUsers = await fetchUsers();
+          renderUsers(allUsers);
+    
+          // 🔍 Search logic
+          const searchInput = document.querySelector(".search-bar");
+          searchInput.addEventListener("input", () => {
+            const query = searchInput.value.trim().toLowerCase();
+            const filtered = allUsers.filter(user => {
+              const fullName = `${user.firstname || ""} ${user.lastname || ""}`.toLowerCase();
+              const email = (user.email || "").toLowerCase();
+              return fullName.includes(query) || email.includes(query);
+            });
+            renderUsers(filtered);
+          });
+    
+          // ✏️ Edit functionality
+          document.querySelector(".user-table").addEventListener("click", (e) => {
+            if (e.target.classList.contains("edit-btn")) {
+              const userId = e.target.getAttribute("data-id");
+              localStorage.setItem("editingUserId", userId);
+              window.location.href = "user_edit_admin.html";
             }
           });
+    
+          // 🗑️ Delete functionality
+          document.querySelector(".user-table").addEventListener("click", async (e) => {
+            if (e.target.classList.contains("delete-btn")) {
+              const userId = e.target.getAttribute("data-id");
+              const confirmDelete = confirm("Are you sure you want to delete this user?");
+              if (!confirmDelete) return;
+    
+              try {
+                await deleteDoc(doc(db, "registrationForm", userId));
+                alert("User deleted successfully!");
+                allUsers = allUsers.filter(user => user.id !== userId); // Update local list
+                renderUsers(allUsers); // Refresh table
+              } catch (error) {
+                console.error("Error deleting user:", error);
+                alert("Failed to delete user.");
+              }
+            }
+          });
+    
+        } catch (error) {
+          console.error("Error fetching users:", error);
+          document.querySelector(".user-table tbody").innerHTML = `<tr><td colspan="5">Failed to load users</td></tr>`;
+        }
+      });
+
+      function formatDate(timestamp) {
+        if (!timestamp || !timestamp.seconds) return "";
+      
+        const date = new Date(timestamp.seconds * 1000);
+        return date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
         });
-      
-        populateForm();
-      </script>
-      
+      }
+    </script>
   
 </body>
 </html>
