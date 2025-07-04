@@ -75,12 +75,13 @@
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
   
     const firebaseConfig = {
-      apiKey: "AIzaSyDA_dVWeUjfgWTJHTIkIomj6ALtD_Lre6g",
-      authDomain: "ptsi-project-48025.firebaseapp.com",
-      projectId: "ptsi-project-48025",
-      storageBucket: "ptsi-project-48025.appspot.com",
-      messagingSenderId: "761002258561",
-      appId: "1:761002258561:web:1fce70be6b73c1b628dd80"
+      apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+      authDomain: "ptsi-system-293aa.firebaseapp.com",
+      projectId: "ptsi-system-293aa",
+      storageBucket: "ptsi-system-293aa.firebasestorage.app",
+      messagingSenderId: "229290736029",
+      appId: "1:229290736029:web:da2246786b173fddcd1774",
+      measurementId: "G-2CEM231Z6K"
     };
   
     const app = initializeApp(firebaseConfig);
@@ -99,7 +100,7 @@
   
         if (!snapshot.empty) {
           const userData = snapshot.docs[0].data();
-          usernameElement.textContent = userData.username || savedUsername;
+          usernameElement.textContent = userData.firstname || savedUsername;
   
           // ✅ SHOW the uploaded profile image
           if (userData.imageBase64?.startsWith("data:image")) {

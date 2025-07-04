@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="assets/css/login-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<script></script>     <!-- OTHER JS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+      authDomain: "ptsi-system-293aa.firebaseapp.com",
+      projectId: "ptsi-system-293aa",
+      storageBucket: "ptsi-system-293aa.firebasestorage.app",
+      messagingSenderId: "229290736029",
+      appId: "1:229290736029:web:da2246786b173fddcd1774",
+      measurementId: "G-2CEM231Z6K"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // LOGIC JS FOR DATABASE AND FUNCTIONALITY HERE
+
+  </script>
+</body>
+</html>
