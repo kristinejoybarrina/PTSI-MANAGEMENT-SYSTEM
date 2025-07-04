@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratory Result</title>
+    <link rel="stylesheet" href="../assets/css/labresult-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://philtbsociety.org/wp-content/uploads/2022/07/cropped-1-PTSI-New-Logo-Original-1-600x786.png" alt="PTSI Logo" class="logo">
+            <h2>PTSI</h2>
+            <div class="sidebar-toggle" id="toggleSidebar">
+                <img src="../assets/img/arrow-left.png" alt="Hide Sidebar">
+            </div>
+        </div>
+        <ul class="menu">
+        <h3>Menu</h3>
+        <li id="dashboard"><i class="icon"><img src="../assets/img/dash-icon.png"></i><h3>Dashboard</h3></li>
+        <li id="lab-result"><i class="icon"><img src="../assets/img/lab-result-icon.png"></i><h3>Lab Result</h3></li>
+        <li id="appointment"><i class="icon"><img src="../assets/img/appointment-icon.png"></i><h3>Appointment</h3></li>
+        </ul>
+        <div class="logout" id="logout">
+            <img src="../assets/img/logout-icon.png" alt="Logout Icon">
+            <h3>Logout</h3>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+          <div class="header-left">
+            <div class="hamburger" id="hamburger">
+              <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
+            </div>
+            <div class="dashboard-title"><strong>Laboratory Result</strong></div>
+          </div>
+    
+          <div class="header-icons">
+            <span><img src="../assets/img/notif-icon.png"></span>
+            <span>
+                <a href="profile.html">
+                    <img src="../assets/img/profile-icon.png">
+                </a>
+                </span>
+          </div>
+        </div>
+    
+    <div class="container">
+        <!-- Header Section -->
+        <h1 class="header-title" id="patientName">
+        </h1>
+
+        <!-- Table Section -->
+        <div class="table-wrapper">
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th class="table-header-cell">
+                            Document
+                        </th>
+                        <th class="table-header-cell">
+                            Date
+                        </th>
+                        <th class="table-header-cell">
+                            Type
+                        </th>
+                        <th class="table-header-cell">
+                            File
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="labResultsBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../assets/js/menu.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyDA_dVWeUjfgWTJHTIkIomj6ALtD_Lre6g",
+          authDomain: "ptsi-project-48025.firebaseapp.com",
+          projectId: "ptsi-project-48025",
+          storageBucket: "ptsi-project-48025.appspot.com",
+          messagingSenderId: "761002258561",
+          appId: "1:761002258561:web:1fce70be6b73c1b628dd80"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+      
+        const code = sessionStorage.getItem("labResultCode");
+        if (!code) {
+          alert("⚠️ No code found. Please enter your lab result code first.");
+          window.location.href = "labresult-login.html";
+        }
+      
+        const snapshot = await getDocs(collection(db, "labResults"));
+        let match = null;
+      
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.resultCode === code) {
+            match = data;
+          }
+        });
+      
+        if (!match) {
+          alert("❌ Invalid code. No matching lab result found.");
+          window.location.href = "labresult-login.html";
+        }
+      
+        const tbody = document.getElementById("labResultsBody");
+        const row = document.createElement("tr");
+      
+        row.innerHTML = `
+        <td class="table-data-cell">
+          #${match.laboratoryId}
+        </td>
+        <td class="table-data-cell">
+          ${match.date}
+        </td>
+        <td class="table-data-cell">
+          ${match.resultType}
+        </td>
+        <td class="table-data-cell">
+          <a href="#" class="download-link">
+            labresult.pdf <i class="fas fa-download download-icon"></i>
+          </a>
+        </td>
+      `;
+      
+      
+      
+        tbody.appendChild(row);
+        document.getElementById("patientName").textContent = match.patientName;
+
+      
+        function downloadPDF(base64Data, filename) {
+          const base64 = base64Data.split(',')[1];
+          const binary = atob(base64);
+          const len = binary.length;
+          const buffer = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            buffer[i] = binary.charCodeAt(i);
+          }
+      
+          const blob = new Blob([buffer], { type: 'application/pdf' });
+          const blobURL = URL.createObjectURL(blob);
+      
+          const a = document.createElement('a');
+          a.href = blobURL;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+      
+        row.querySelector(".download-link").addEventListener("click", (e) => {
+          e.preventDefault();
+          downloadPDF(match.pdfBase64, `LabResult-${match.resultCode}.pdf`);
+        });
+      </script>
+      
+</body>
+</html>
