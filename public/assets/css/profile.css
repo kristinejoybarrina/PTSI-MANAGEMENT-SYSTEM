@@ -649,3 +649,16 @@ cursor: pointer;
 .button-row button:hover {
   opacity: 0.9;
 }
+
+#saveBtn {
+  background-color: #001aff;
+  color: white;
+  padding: 12px 25px;
+  font-weight: 795;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px 0;
+  float: right;
+}
+

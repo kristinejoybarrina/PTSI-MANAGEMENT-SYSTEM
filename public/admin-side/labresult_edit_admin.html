@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Admin</title>
+    <link rel="stylesheet" href="../assets/css/labresult_edit_admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://philtbsociety.org/wp-content/uploads/2022/07/cropped-1-PTSI-New-Logo-Original-1-600x786.png" alt="PTSI Logo" class="logo">
+            <h2>PTSI</h2>
+            <div class="sidebar-toggle" id="toggleSidebar">
+                <img src="../assets/img/arrow-left.png" alt="Hide Sidebar">
+            </div>
+        </div>
+        <ul class="menu">
+        <h3>Menu</h3>
+        <li id="dashboard"><i class="icon"><img src="../assets/img/dash-icon.png"></i><h3>Dashboard</h3></li>
+        <li id="user-account"><i class="icon"><img src="../assets/img/account-icon.png"></i><h3>User Account</h3></li>
+        <li id="lab-result"><i class="icon"><img src="../assets/img/lab-result-icon.png"></i><h3>Lab Result</h3></li>
+        <li id="appointment"><i class="icon"><img src="../assets/img/appointment-icon.png"></i><h3>Appointment</h3></li>
+        </ul>
+        <div class="logout" id="logout">
+            <img src="../assets/img/logout-icon.png" alt="Logout Icon">
+            <h3>Logout</h3>
+        </div>
+        
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="header-left">
+              <div class="hamburger" id="hamburger">
+                <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
+              </div>
+              <div class="labresult-title"><strong>User Account</strong></div>
+            </div>
+            <div class="header-icons">
+                <span id="notificationBell" class="notification-bell">
+                    <img src="../assets/img/notif-icon.png" alt="Notification Icon">
+                </span>
+                <span><img src="../assets/img/profile-icon.png" alt="Profile Icon"></span>
+            </div>
+        </div>
+
+        <div id="notificationDropdown" class="notification-dropdown">
+            <div class="notification-header">
+                <h3>Notifications</h3>
+            </div>
+            <div id="notificationItems" class="notification-items"></div>
+            <div class="all-notifications-link-container">
+                <a href="#" class="all-notifications-link">See all</a>
+            </div>
+        </div>
+    
+
+        <form id="editLabForm">
+            <a href="user_admin.html" class="back-icon">
+                <img src="../assets/img/back-icon.png" alt="Back" />
+            </a>
+            <h1>Edit Lab Result</h1>
+        
+            <label>Lab ID:
+                <input type="text" id="labId" name="labId" required />
+            </label><br/>
+        
+            <label>Name:
+                <input type="text" id="name" name="name" required />
+            </label><br/>
+        
+            <label>Date:
+                <input type="date" id="date" name="date" required />
+            </label><br/>
+        
+            <label>Type:
+                <input type="text" id="type" name="type" required />
+            </label><br/>
+        
+            <label>File (PDF):
+                <input type="file" id="labFile" name="labFile" accept="application/pdf" />
+            </label><br/>
+        
+            <div class="form-button-container">
+                <button type="submit">Update Lab Result</button>
+            </div>
+        </form>
+        
+
+    <script src="../assets/js/menu.js"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        updateDoc,
+        serverTimestamp
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    
+      const firebaseConfig = {
+        apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+        authDomain: "ptsi-system-293aa.firebaseapp.com",
+        projectId: "ptsi-system-293aa",
+        storageBucket: "ptsi-system-293aa.appspot.com",
+        messagingSenderId: "229290736029",
+        appId: "1:229290736029:web:da2246786b173fddcd1774"
+      };
+    
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const form = document.getElementById("editLabForm");
+      const labId = localStorage.getItem("editingLabId");
+    
+      if (!labId) {
+        alert("No lab result selected.");
+        window.location.href = "lab_result_admin.html";
+      }
+    
+      async function populateForm() {
+        const docRef = doc(db, "labResults", labId);
+        const docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          form.labId.value = data.laboratoryId || "";
+          form.name.value = data.patientName || "";
+          form.date.value = data.date || "";
+          form.type.value = data.resultType || "";
+        } else {
+          alert("Lab result not found.");
+          window.location.href = "lab_result_admin.html";
+        }
+      }
+    
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById("labFile");
+        let pdfBase64 = null;
+    
+        if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          pdfBase64 = await toBase64(file);
+        }
+    
+        const updatedData = {
+          laboratoryId: form.labId.value,
+          patientName: form.name.value,
+          date: form.date.value,
+          resultType: form.type.value,
+          lastUpdated: serverTimestamp()
+        };
+    
+        if (pdfBase64) {
+          updatedData.pdfBase64 = pdfBase64;
+        }
+    
+        try {
+          await updateDoc(doc(db, "labResults", labId), updatedData);
+          alert("Lab result updated!");
+          window.location.href = "lab_result_admin.html";
+        } catch (err) {
+          console.error("Error updating lab result:", err);
+          alert("Update failed.");
+        }
+      });
+    
+      function toBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+    
+      populateForm();
+    </script>
+    
+</body>
+</html>
