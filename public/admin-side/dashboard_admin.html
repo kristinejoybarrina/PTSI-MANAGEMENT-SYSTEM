@@ -148,15 +148,17 @@
         // Navigation functions
         function navigateTo(section) {
             console.log(`Navigating to: ${section}`);
-            // Add your navigation logic here
-            // For example: window.location.href = `/${section}.html`;
+            window.location.href = `${section}.html`;
+        }
+        
+        // Logout function
+        function handleLogout() {
+            // Clear authentication data
+            localStorage.removeItem('loggedInUsername');
+            localStorage.removeItem('userRole');
             
-            // For demo purposes, show an alert
-            const sectionName = section.replace('-', ' ');
-            alert(`Navigating to ${sectionName} page...`);
-            
-            // In a real implementation, uncomment the following line:
-            // window.location.href = `/${section}.html`;
+            // Redirect to login page
+            window.location.href = '../index.html';
         }
 
         // Close modal when clicking the close button
@@ -194,20 +196,19 @@
                     navigateTo('settings');
                 });
 
+                // Add click handler for top logout button
                 document.getElementById('logoutTop')?.addEventListener('click', (e) => {
                     e.preventDefault();
-                    // Add logout logic here
-                    console.log('Logging out...');
-                    // window.location.href = '/logout';
+                    handleLogout();
                 });
             }
 
             // Menu item click handlers
             const menuItems = {
-                'user-account': () => navigateTo('user-account'),
-                'lab-result': () => navigateTo('lab-result'),
-                'appointment': () => navigateTo('appointment'),
-                'dashboard': () => navigateTo('dashboard')
+                'user-account': () => navigateTo('user_admin'),
+                'lab-result': () => navigateTo('lab_result_admin'),
+                'appointment': () => navigateTo('appointment_admin'),
+                'dashboard': () => navigateTo('dashboard_admin')
             };
 
             // Add click handlers to menu items
@@ -343,6 +344,19 @@
 
     // Initialize admin dashboard
     document.addEventListener('DOMContentLoaded', async () => {
+        // Add click handler for sidebar logout button
+        document.getElementById('logout')?.addEventListener('click', handleLogout);
+        
+        // Check if user is logged in
+        const loggedInUsername = localStorage.getItem('loggedInUsername');
+        const userRole = localStorage.getItem('userRole');
+        
+        if (!loggedInUsername || userRole !== 'admin') {
+            // Redirect to login if not authenticated or not admin
+            window.location.href = '../index.html';
+            return;
+        }
+        
         // Initialize calendar
         if (window.adminCalendar) {
             const today = new Date();
