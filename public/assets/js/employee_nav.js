@@ -96,4 +96,112 @@
         initializeNavigation();
     }
 
+           // Initialize sidebar toggle functionality
+        initializeSidebarToggle();
+
+        // Optional: Add active class to current page
+        highlightCurrentPage();
+    
+
 })();
+
+
+    // Function to initialize sidebar toggle functionality
+    function initializeSidebarToggle() {
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const hamburger = document.getElementById('hamburger');
+        const mainContent = document.querySelector('.main-content');
+
+        // Check if sidebar state is saved in localStorage
+        const sidebarState = localStorage.getItem('sidebarCollapsed');
+        if (sidebarState === 'true') {
+            collapseSidebar();
+        }
+
+        // Toggle sidebar when toggle button is clicked
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleSidebar();
+            });
+        }
+
+        // Toggle sidebar when hamburger is clicked
+        if (hamburger) {
+            hamburger.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleSidebar();
+            });
+        }
+
+        // Function to toggle sidebar
+        function toggleSidebar() {
+            if (sidebar && mainContent) {
+                const isCollapsed = sidebar.classList.contains('collapsed');
+                
+                if (isCollapsed) {
+                    expandSidebar();
+                } else {
+                    collapseSidebar();
+                }
+                
+                // Save state to localStorage
+                localStorage.setItem('sidebarCollapsed', !isCollapsed);
+            }
+        }
+
+        // Function to collapse sidebar
+        function collapseSidebar() {
+            if (sidebar && mainContent) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('sidebar-collapsed');
+                
+                // Update toggle button arrow direction
+                const toggleArrow = toggleBtn?.querySelector('img');
+                if (toggleArrow) {
+                    toggleArrow.style.transform = 'rotate(180deg)';
+                }
+            }
+        }
+
+        // Function to expand sidebar
+        function expandSidebar() {
+            if (sidebar && mainContent) {
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('sidebar-collapsed');
+                
+                // Update toggle button arrow direction
+                const toggleArrow = toggleBtn?.querySelector('img');
+                if (toggleArrow) {
+                    toggleArrow.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768) {
+                // On mobile, always show full sidebar when opened
+                if (sidebar && !sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.remove('collapsed');
+                    mainContent?.classList.remove('sidebar-collapsed');
+                }
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                const isClickInsideSidebar = sidebar?.contains(e.target);
+                const isClickOnHamburger = hamburger?.contains(e.target);
+                const isClickOnToggle = toggleBtn?.contains(e.target);
+                
+                if (!isClickInsideSidebar && !isClickOnHamburger && !isClickOnToggle) {
+                    if (sidebar && !sidebar.classList.contains('collapsed')) {
+                        collapseSidebar();
+                    }
+                }
+            }
+        });
+    }
