@@ -378,7 +378,7 @@ cursor: pointer;
 .lab-result-form input[type="text"],
 .lab-result-form input[type="date"],
 .lab-result-form input[type="file"] {
-  width: 100%;
+  width: 95%;
   padding: 8px;
   margin-bottom: 15px;
   border: 1px solid #ccc;

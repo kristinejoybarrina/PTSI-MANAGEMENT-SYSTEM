@@ -183,39 +183,42 @@
           pdfBase64 = await toBase64(file);
         }
       
-        const updatedData = {
+        // Update labResults subcollection
+        const labUpdateData = {
           date: form.date.value,
           resultType: form.type.value,
-          firstName: form.firstName.value,
-          middleName: form.middleName.value,
-          lastName: form.lastName.value,
           lastUpdated: serverTimestamp()
         };
-        
       
         if (pdfBase64) {
-          updatedData.pdfBase64 = pdfBase64;
+          labUpdateData.pdfBase64 = pdfBase64;
         }
+      
+        // Update patientLab document (main)
+        const patientUpdateData = {
+          firstName: form.firstName.value,
+          middleName: form.middleName.value,
+          lastName: form.lastName.value
+        };
       
         try {
           const labRef = doc(db, "patientLab", patientId, "labResults", labId);
-          await updateDoc(labRef, updatedData);
-          alert("Lab result updated!");
+          const patientRef = doc(db, "patientLab", patientId);
+      
+          await Promise.all([
+            updateDoc(labRef, labUpdateData),
+            updateDoc(patientRef, patientUpdateData)
+          ]);
+      
+          alert("✅ Lab result and patient info updated!");
           window.location.href = "lab_result_admin.html";
+      
         } catch (err) {
-          console.error("Error updating lab result:", err);
-          alert("Update failed.");
+          console.error("Error updating lab result or patient info:", err);
+          alert("❌ Update failed.");
         }
       });
       
-      function toBase64(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      }
       
       populateForm();
       

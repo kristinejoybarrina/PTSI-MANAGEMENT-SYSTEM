@@ -161,9 +161,9 @@
       }
       
       document.querySelector(".save-btn").addEventListener("click", async () => {
-        const lastName = document.getElementById("lastName").value.trim();
-        const firstName = document.getElementById("firstName").value.trim();
-        const middleName = document.getElementById("middleName").value.trim();
+        const lastName = document.getElementById("lastName").value.trim().toUpperCase();
+        const firstName = document.getElementById("firstName").value.trim().toUpperCase();
+        const middleName = document.getElementById("middleName").value.trim().toUpperCase();
         const labId = document.getElementById("labId").value.trim();
         const date = document.querySelector("input[type='date']").value.trim();
         const resultType = document.querySelector("input[placeholder='Type of result']").value.trim();
@@ -196,11 +196,14 @@
           });
       
           alert("✅ Lab result saved under patientLab → labResults.");
+          window.location.href = "lab_result_admin.html"; // ✅ Redirect here
+      
         } catch (err) {
           console.error("Error saving result:", err);
           alert("❌ Failed to save lab result.");
         }
       });
+      
       </script>
       
       
