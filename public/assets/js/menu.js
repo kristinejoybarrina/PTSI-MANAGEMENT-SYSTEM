@@ -41,18 +41,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    //Logout
-    const logoutBtn = document.getElementById('logout');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            // Clear any stored login data
-            localStorage.removeItem('activeMenuId');
-            localStorage.removeItem('user'); 
-
-            // Redirect to login page
-            window.location.href = '../index.html'; 
+    // Set active menu based on current page
+    const currentPage = window.location.pathname.split('/').pop();
+    let activeMenuId = '';
+    
+    if (window.location.pathname.includes('/admin-side/')) {
+        if (currentPage === 'dashboard_admin.html') {
+            activeMenuId = 'dashboard';
+        } else if (currentPage === 'user_admin.html') {
+            activeMenuId = 'user-account';
+        } else if (currentPage === 'lab_result_admin.html') {
+            activeMenuId = 'lab-result';
+        } else if (currentPage === 'appointment_admin.html') {
+            activeMenuId = 'appointment';
+        }
+    } else {
+        if (currentPage === 'dashboard.html') {
+            activeMenuId = 'dashboard';
+        } else if (currentPage === 'labresult-login.html' || currentPage === 'labresult.html') {
+            activeMenuId = 'lab-result';
+        } else if (currentPage === 'appointment.html') {
+            activeMenuId = 'appointment';
+        }
+    }
+    
+    if (activeMenuId) {
+        document.querySelectorAll('.menu li').forEach(item => {
+            item.classList.remove('active');
+            if (item.id === activeMenuId) {
+                item.classList.add('active');
+            }
         });
     }
+
+    // Logout functionality
+    const logoutBtns = document.querySelectorAll('.logout, .logout-btn');
+    const handleLogout = () => {
+        // Clear any stored login data
+        localStorage.removeItem('activeMenuId');
+        localStorage.removeItem('user');
+        // Redirect to login page
+        window.location.href = '/index.html';
+    };
+    
+    logoutBtns.forEach(btn => {
+        btn.addEventListener('click', handleLogout);
+    });
 });
 
 // NOTIFICATION///////////
