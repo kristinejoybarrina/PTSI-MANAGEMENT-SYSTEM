@@ -391,7 +391,7 @@
               <td>${formatDate(user.lastUpdated)}</td>
               <td class="actions">
                 <button class="edit-btn" data-id="${user.id}" data-type="${userType}">Edit</button>
-                <button class="delete-btn" data-id="${user.id}" data-collection="${userType === 'patient' ? 'registrationForm' : 'employees'}">Delete</button>
+                <button class="delete-btn" data-id="${user.id}" data-type="${userType}">Delete</button>
               </td>
             </tr>`;
           tbody.insertAdjacentHTML("beforeend", row);
@@ -496,7 +496,10 @@
           document.querySelector(".user-table").addEventListener("click", (e) => {
             if (e.target.classList.contains("edit-btn")) {
               const userId = e.target.getAttribute("data-id");
+              const userType = e.target.getAttribute("data-type") || 'patient';
+              const collectionName = userType === 'patient' ? 'registrationForm' : 'employees';
               localStorage.setItem("editingUserId", userId);
+              localStorage.setItem("userCollection", collectionName);
               window.location.href = "user_edit_admin.html";
             }
           });
@@ -505,7 +508,8 @@
           document.querySelector(".user-table").addEventListener("click", async (e) => {
             if (e.target.classList.contains("delete-btn")) {
               const userId = e.target.getAttribute("data-id");
-              const collectionName = e.target.getAttribute("data-type") || "registrationForm";
+              const userType = e.target.getAttribute("data-type") || 'patient';
+              const collectionName = userType === 'patient' ? 'registrationForm' : 'employees';
               const confirmDelete = confirm("Are you sure you want to delete this user?");
               if (!confirmDelete) return;
     

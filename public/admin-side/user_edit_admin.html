@@ -163,38 +163,47 @@
         const db = getFirestore(app);
       
         const userId = localStorage.getItem("editingUserId");
+        const collectionName = localStorage.getItem("userCollection") || "registrationForm";
         const form = document.getElementById("editUserForm");
       
         if (!userId) {
           alert("No user selected for editing.");
           window.location.href = "user_admin.html";
+          return;
         }
       
         async function populateForm() {
-          const docRef = doc(db, "registrationForm", userId);
-          const snapshot = await getDoc(docRef);
-      
-          if (snapshot.exists()) {
-            const userData = snapshot.data();
-            form.firstname.value = userData.firstname || "";
-            form.lastname.value = userData.lastname || "";
-            form.middlename.value = userData.middlename || "";
-            form.suffix.value = userData.suffix || "";
-            form.email.value = userData.email || "";
-            form.age.value = userData.age || "";
-            form.gender.value = userData.gender || "";
-            form.phone.value = userData.phone || "";
-            form.street.value = userData.street || "";
-            form.region.value = userData.region || "";
-            form.province.value = userData.province || "";
-            form.city.value = userData.city || "";
-            form.barangay.value = userData.barangay || "";
-            form.emergencyName.value = userData.emergencyName || "";
-            form.relationship.value = userData.relationship || "";
-            form.emergencyNumber.value = userData.emergencyNumber || "";
-            form.username.value = userData.username || "";
-          } else {
-            alert("User not found.");
+          try {
+            const docRef = doc(db, collectionName, userId);
+            const snapshot = await getDoc(docRef);
+        
+            if (snapshot.exists()) {
+              const userData = snapshot.data();
+              // Handle both firstName/firstname and lastName/lastname variations
+              form.firstname.value = userData.firstname || userData.firstName || "";
+              form.lastname.value = userData.lastname || userData.lastName || "";
+              form.middlename.value = userData.middlename || userData.middleName || "";
+              form.suffix.value = userData.suffix || "";
+              form.email.value = userData.email || "";
+              form.age.value = userData.age || "";
+              form.gender.value = userData.gender || "";
+              form.phone.value = userData.phone || userData.phoneNumber || "";
+              form.street.value = userData.street || userData.address?.street || "";
+              form.region.value = userData.region || userData.address?.region || "";
+              form.province.value = userData.province || userData.address?.province || "";
+              form.city.value = userData.city || userData.address?.city || "";
+              form.barangay.value = userData.barangay || userData.address?.barangay || "";
+              form.emergencyName.value = userData.emergencyName || userData.emergencyContact?.name || "";
+              form.relationship.value = userData.relationship || userData.emergencyContact?.relationship || "";
+              form.emergencyNumber.value = userData.emergencyNumber || userData.emergencyContact?.phone || "";
+              form.username.value = userData.username || "";
+            } else {
+              alert("User not found.");
+              window.location.href = "user_admin.html";
+            }
+          } catch (error) {
+            console.error("Error loading user data:", error);
+            alert("Error loading user data. Please try again.");
             window.location.href = "user_admin.html";
           }
         }
@@ -202,34 +211,60 @@
         form.addEventListener("submit", async (e) => {
           e.preventDefault();
       
-          const updatedData = {
-            firstname: form.firstname.value,
-            lastname: form.lastname.value,
-            middlename: form.middlename.value,
-            suffix: form.suffix.value,
-            email: form.email.value,
-            age: form.age.value,
-            gender: form.gender.value,
-            phone: form.phone.value,
-            street: form.street.value,
-            region: form.region.value,
-            province: form.province.value,
-            city: form.city.value,
-            barangay: form.barangay.value,
-            emergencyName: form.emergencyName.value,
-            relationship: form.relationship.value,
-            emergencyNumber: form.emergencyNumber.value,
-            username: form.username.value,
-            lastUpdated: serverTimestamp()
-          };
-      
           try {
-            await updateDoc(doc(db, "registrationForm", userId), updatedData);
+            const userRef = doc(db, collectionName, userId);
+            const userData = {
+              // Handle both firstName/firstname and lastName/lastname variations
+              firstname: form.firstname.value,
+              firstName: form.firstname.value,
+              lastname: form.lastname.value,
+              lastName: form.lastname.value,
+              middlename: form.middlename.value,
+              middleName: form.middlename.value,
+              suffix: form.suffix.value,
+              email: form.email.value,
+              age: form.age.value,
+              gender: form.gender.value,
+              phone: form.phone.value,
+              phoneNumber: form.phone.value,
+              // Handle both flat and nested address structures
+              street: form.street.value,
+              region: form.region.value,
+              province: form.province.value,
+              city: form.city.value,
+              barangay: form.barangay.value,
+              address: {
+                street: form.street.value,
+                region: form.region.value,
+                province: form.province.value,
+                city: form.city.value,
+                barangay: form.barangay.value
+              },
+              // Handle both flat and nested emergency contact
+              emergencyName: form.emergencyName.value,
+              relationship: form.relationship.value,
+              emergencyNumber: form.emergencyNumber.value,
+              emergencyContact: {
+                name: form.emergencyName.value,
+                relationship: form.relationship.value,
+                phone: form.emergencyNumber.value
+              },
+              username: form.username.value,
+              lastUpdated: serverTimestamp()
+            };
+      
+            // Only include role field for employees/admins
+            if (collectionName === 'employees') {
+              userData.role = userData.role || 'employee'; // Preserve existing role or default to employee
+            }
+      
+            await updateDoc(userRef, userData);
+      
             alert("User updated successfully!");
             window.location.href = "user_admin.html";
           } catch (error) {
             console.error("Error updating user:", error);
-            alert("Failed to update user.");
+            alert("Failed to update user. Please try again.");
           }
         });
       
