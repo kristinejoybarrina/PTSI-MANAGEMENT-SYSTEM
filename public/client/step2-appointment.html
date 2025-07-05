@@ -166,6 +166,8 @@
         getFirestore,
         collection,
         addDoc,
+        doc,          
+        setDoc,
         serverTimestamp,
         query,
         where,
@@ -221,24 +223,94 @@
         logActivity("Visited Appointment Page", "appointment");
 
         // Appointment form
-        document.getElementById("appointment-form")?.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const date = document.getElementById("date").value;
-            const time = document.getElementById("time").value;
+        document.getElementById('details').addEventListener('submit', async function (e) {
+                e.preventDefault();
 
-            if (date && time) {
-                await logActivity(`Selected Appointment: ${date} at ${time}`, "appointment");
-                alert("✅ Appointment info saved! Proceeding to next step...");
-                // window.location.href = "patient-details.html";
-            }
-        });
+                // Get step 1 data from sessionStorage
+                const step1Data = sessionStorage.getItem('appointmentStep1');
 
-        // Logout Button
-        logoutBtn?.addEventListener("click", () => {
-            localStorage.removeItem("loggedInUsername");
-            alert("👋 You have been logged out.");
-            window.location.href = "../index.html";
-        });
+                if (!step1Data) {
+                    alert("❌ Step 1 data not found. Please start from Step 1.");
+                    window.location.href = 'appointment.html';
+                    return; // Exit the function early
+                }
+
+                let appointmentData;
+                try {
+                    appointmentData = JSON.parse(step1Data);
+                } catch (parseError) {
+                    console.error("Error parsing Step 1 data:", parseError);
+                    alert("❌ Invalid Step 1 data. Please start from Step 1.");
+                    window.location.href = 'appointment.html';
+                    return;
+                }
+
+                // Get values from form fields
+                const lastname = document.getElementById('lastname').value;
+                const firstname = document.getElementById('firstname').value;
+                const middlename = document.getElementById('middlename').value;
+                const suffix = document.getElementById('suffix').value;
+                const birth = document.getElementById('birth').value;
+                const age = document.getElementById('age').value;
+                const gender = document.getElementById('gender').value;
+                const phone = document.getElementById('phone').value;
+                const region = document.getElementById('region').value;
+                const province = document.getElementById('province').value;
+                const city = document.getElementById('city').value;
+                const barangay = document.getElementById('barangay').value;
+                const street = document.getElementById('street').value;
+            
+
+            try {
+                const docRef = doc(collection(db, "patientSched"));
+
+                const userData = {
+                    id: docRef.id,
+                    // Step 1 data
+                    prefTime: appointmentData.prefTime,
+                    prefDate: appointmentData.prefDate,
+                    //Step 2 data
+                    lastname: lastname,
+                    firstname: firstname,
+                    middlename: middlename,
+                    suffix: suffix,
+                    birth: birth,
+                    age: age,
+                    gender: gender,
+                    phone: phone,
+                    region: region,
+                    province: province,
+                    city: city,
+                    barangay: barangay,
+                    street: street,
+                    bookingDate: serverTimestamp(),
+                    lastEdited: serverTimestamp()         
+                };
+
+                await setDoc(docRef, userData);
+
+                // Clear sessionStorage after successful submission
+                sessionStorage.removeItem('appointmentStep1');
+                sessionStorage.removeItem('appointmentStep2');
+
+                    alert("✅ Appointment booking successful!");
+                    document.getElementById('details').reset();
+
+                    // Redirect to dashboard or confirmation page
+                    window.location.href = 'dashboard.html';
+
+                } catch (err) {
+                console.error("❌ Appointment booking error:", err);
+                alert("Something went wrong. Please try again.");
+                }
+                });
+
+                // Logout Button
+                logoutBtn?.addEventListener("click", () => {
+                    localStorage.removeItem("loggedInUsername");
+                    alert("👋 You have been logged out.");
+                    window.location.href = "../index.html";
+                });
 
         // Optional: Call loadAddressData if defined
         if (typeof loadAddressData === "function") {
