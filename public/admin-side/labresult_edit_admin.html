@@ -58,18 +58,27 @@
     
 
         <form id="editLabForm">
-            <a href="user_admin.html" class="back-icon">
+            <a href="lab_result_admin.html" class="back-icon">
                 <img src="../assets/img/back-icon.png" alt="Back" />
             </a>
             <h1>Edit Lab Result</h1>
         
             <label>Lab ID:
-                <input type="text" id="labId" name="labId" required />
-            </label><br/>
+              <input type="text" id="labId" name="labId" readonly />
+          </label><br/>
+          
+          <label>First Name:
+            <input type="text" id="firstName" name="firstName" required />
+          </label><br/>
+          
+          <label>Middle Name:
+              <input type="text" id="middleName" name="middleName" />
+          </label><br/>
+          
+          <label>Last Name:
+              <input type="text" id="lastName" name="lastName" required />
+          </label><br/>
         
-            <label>Name:
-                <input type="text" id="name" name="name" required />
-            </label><br/>
         
             <label>Date:
                 <input type="date" id="date" name="date" required />
@@ -78,6 +87,11 @@
             <label>Type:
                 <input type="text" id="type" name="type" required />
             </label><br/>
+            
+            <label>6-Digit Code:
+              <input type="text" id="resultCode" name="resultCode" readonly />
+            </label><br/>
+            
         
             <label>File (PDF):
                 <input type="file" id="labFile" name="labFile" accept="application/pdf" />
@@ -99,66 +113,93 @@
         updateDoc,
         serverTimestamp
       } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    
+      
       const firebaseConfig = {
         apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
         authDomain: "ptsi-system-293aa.firebaseapp.com",
         projectId: "ptsi-system-293aa",
-        storageBucket: "ptsi-system-293aa.appspot.com",
+        storageBucket: "ptsi-system-293aa.firebasestorage.app",
         messagingSenderId: "229290736029",
-        appId: "1:229290736029:web:da2246786b173fddcd1774"
+        appId: "1:229290736029:web:da2246786b173fddcd1774",
+        measurementId: "G-2CEM231Z6K"
       };
-    
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
       const form = document.getElementById("editLabForm");
+      
       const labId = localStorage.getItem("editingLabId");
-    
-      if (!labId) {
+      const patientId = localStorage.getItem("editingPatientId");
+      
+      if (!labId || !patientId) {
         alert("No lab result selected.");
         window.location.href = "lab_result_admin.html";
       }
-    
+      
       async function populateForm() {
-        const docRef = doc(db, "labResults", labId);
-        const docSnap = await getDoc(docRef);
-    
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          form.labId.value = data.laboratoryId || "";
-          form.name.value = data.patientName || "";
-          form.date.value = data.date || "";
-          form.type.value = data.resultType || "";
-        } else {
-          alert("Lab result not found.");
+        const labRef = doc(db, "patientLab", patientId, "labResults", labId);
+        const labSnap = await getDoc(labRef);
+      
+        const patientRef = doc(db, "patientLab", patientId);
+        const patientSnap = await getDoc(patientRef);
+      
+        if (!labSnap.exists() || !patientSnap.exists()) {
+          alert("Lab result or patient not found.");
           window.location.href = "lab_result_admin.html";
+          return;
         }
+      
+        const labData = labSnap.data();
+        const patientData = patientSnap.data();
+      
+        form.labId.value = patientData.laboratoryId || "-";
+        form.firstName.value = patientData.firstName || "";
+        form.middleName.value = patientData.middleName || "";
+        form.lastName.value = patientData.lastName || "";
+        form.date.value = labData.date || "";
+        form.type.value = labData.resultType || "";
+      
+        // 6-digit code logic
+        if (!labData.resultCode) {
+          const generatedCode = generateSixDigitCode();
+          await updateDoc(labRef, { resultCode: generatedCode });
+          form.resultCode.value = generatedCode;
+        } else {
+          form.resultCode.value = labData.resultCode;
+        }
+      }      
+
+      function generateSixDigitCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
       }
-    
+      
+      
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const fileInput = document.getElementById("labFile");
         let pdfBase64 = null;
-    
+      
         if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
           pdfBase64 = await toBase64(file);
         }
-    
+      
         const updatedData = {
-          laboratoryId: form.labId.value,
-          patientName: form.name.value,
           date: form.date.value,
           resultType: form.type.value,
+          firstName: form.firstName.value,
+          middleName: form.middleName.value,
+          lastName: form.lastName.value,
           lastUpdated: serverTimestamp()
         };
-    
+        
+      
         if (pdfBase64) {
           updatedData.pdfBase64 = pdfBase64;
         }
-    
+      
         try {
-          await updateDoc(doc(db, "labResults", labId), updatedData);
+          const labRef = doc(db, "patientLab", patientId, "labResults", labId);
+          await updateDoc(labRef, updatedData);
           alert("Lab result updated!");
           window.location.href = "lab_result_admin.html";
         } catch (err) {
@@ -166,7 +207,7 @@
           alert("Update failed.");
         }
       });
-    
+      
       function toBase64(file) {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -175,9 +216,15 @@
           reader.readAsDataURL(file);
         });
       }
-    
+      
       populateForm();
-    </script>
+      
+      document.getElementById("addAnotherBtn").addEventListener("click", () => {
+        localStorage.setItem("addLabForPatientId", patientId);
+        window.location.href = "labresult_add_admin.html";
+      });
+      </script>
+      
     
 </body>
 </html>

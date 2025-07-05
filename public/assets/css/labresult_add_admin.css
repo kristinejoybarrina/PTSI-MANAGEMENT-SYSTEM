@@ -650,7 +650,7 @@ body {
     }
   }
   
-  form#editLabForm {
+  form#addLabForm {
     max-width: 600px;
     margin: 30px auto;
     margin-top: 100px;
@@ -660,7 +660,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   
-  form#editLabForm label {
+  form#addLabForm label {
     display: block;
     margin-bottom: 15px;
     font-size: 16px;
@@ -668,10 +668,10 @@ body {
     color: #333;
   }
   
-  form#editLabForm input[type="text"],
-  form#editLabForm input[type="email"],
-  form#editLabForm input[type="date"],
-  form#editLabForm input[type="file"] {
+  form#addLabForm input[type="text"],
+  form#addLabForm input[type="email"],
+  form#addLabForm input[type="date"],
+  form#addLabForm input[type="file"] {
     width: 95%;
     padding: 10px;
     font-size: 15px;
@@ -679,26 +679,11 @@ body {
     border-radius: 5px;
   }
   
-  form#editLabForm button[type="submit"] {
-    background-color: #003b94; /* Blue for Update button */
-  }
-  
-  form#editLabForm button[type="submit"]:hover {
-    background-color: #001f5c; /* Darker blue on hover */
-  }
-  
-  #addAnotherBtn {
-    background-color: #4CAF50; /* Green */
-  }
-  
-  #addAnotherBtn:hover {
-    background-color: #388E3C; /* Darker green on hover */
-  }
-  
-  form#editLabForm button {
+  form#addLabForm button {
     display: inline-block;
     padding: 10px 20px;
     font-size: 16px;
+    background-color: #003b94;
     color: white;
     border: none;
     margin-top: 10px;
@@ -707,8 +692,11 @@ body {
     transition: background-color 0.3s ease;
   }
   
+  form#addLabForm button:hover {
+    background-color: #001429;
+  }
+  
   .form-button-container {
     text-align: end;
     padding-right: 7px;
   }
-  

@@ -64,12 +64,18 @@
         </a>
 
         <h2>Result Entry <span style="color:#0a1b52;">#1</span></h2>
+        
+        <label>First Name</label>
+        <input type="text" id="firstName" placeholder="Enter first name">
 
-        <label>Patient's Name</label>
-        <input type="text" placeholder="Enter name">
+        <label>Middle Name</label>
+        <input type="text" id="middleName" placeholder="Enter middle name">     
+        
+        <label>Last Name</label>
+        <input type="text" id="lastName" placeholder="Enter last name">   
 
         <label>Laboratory ID</label>
-        <input type="text" placeholder="Enter ID">
+        <input type="text" id="labId" placeholder="Enter ID">
 
         <label>Date</label>
         <input type="date">
@@ -84,72 +90,119 @@
         <input type="file">
 
         <div class="form-buttons">
-            <button class="add-btn">Add Another Result</button>
             <button class="save-btn">Save Input Result</button>
         </div>
     </div>    
     <script src="../assets/js/menu.js"></script>
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        setDoc,
+        addDoc,
+        getDocs,
+        serverTimestamp
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
       
-        const firebaseConfig = {
-          apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
-          authDomain: "ptsi-system-293aa.firebaseapp.com",
-          projectId: "ptsi-system-293aa",
-          storageBucket: "ptsi-system-293aa.firebasestorage.app",
-          messagingSenderId: "229290736029",
-          appId: "1:229290736029:web:da2246786b173fddcd1774",
-          measurementId: "G-2CEM231Z6K"
-        };
+      const firebaseConfig = {
+        apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+        authDomain: "ptsi-system-293aa.firebaseapp.com",
+        projectId: "ptsi-system-293aa",
+        storageBucket: "ptsi-system-293aa.appspot.com",
+        messagingSenderId: "229290736029",
+        appId: "1:229290736029:web:da2246786b173fddcd1774",
+        measurementId: "G-2CEM231Z6K"
+      };
       
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
       
-        // Helper to convert file to Base64
-        function toBase64(file) {
-          return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result); // base64 string
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
-        }
+      // Generate a random 6-digit result code
+      function generateResultCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+      }
       
-        document.querySelector(".save-btn").addEventListener("click", async () => {
-          const name = document.querySelector("input[placeholder='Enter name']").value;
-          const labId = document.querySelector("input[placeholder='Enter ID']").value;
-          const date = document.querySelector("input[type='date']").value;
-          const resultType = document.querySelector("input[placeholder='Type of result']").value;
-          const resultCode = document.getElementById("resultCode").value;
-          const file = document.querySelector("input[type='file']").files[0];
-      
-          if (!name || !labId || !date || !resultType || !file) {
-            alert("Please fill in all fields and select a file.");
-            return;
-          }
-      
-          try {
-            const base64PDF = await toBase64(file);
-            const docRef = doc(collection(db, "labResults"));
-      
-            await setDoc(docRef, {
-              id: docRef.id,
-              patientName: name,
-              laboratoryId: labId,
-              date: date,
-              resultType: resultType,
-              resultCode: resultCode, // 🆕 Include the code
-              pdfBase64: base64PDF
-            });
-      
-            alert("✅ Lab result saved successfully!");
-          } catch (err) {
-            console.error("Error saving lab result:", err);
-            alert("❌ Failed to save lab result.");
+      // Fetch next available Lab ID based on max existing labId
+      async function getNextLabId() {
+        const snapshot = await getDocs(collection(db, "patientLab"));
+        let maxId = 0;
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const id = parseInt(data.laboratoryId);
+          if (!isNaN(id) && id > maxId) {
+            maxId = id;
           }
         });
+        return (maxId + 1).toString();
+      }
+      
+      // On page load, set Lab ID and result code
+      window.addEventListener("DOMContentLoaded", async () => {
+        const labIdInput = document.getElementById("labId");
+        const resultCodeInput = document.getElementById("resultCode");
+        if (labIdInput) {
+          labIdInput.value = await getNextLabId();
+        }
+        if (resultCodeInput) {
+          resultCodeInput.value = generateResultCode();
+        }
+      });
+      
+      // Convert file to Base64
+      function toBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+      
+      document.querySelector(".save-btn").addEventListener("click", async () => {
+        const lastName = document.getElementById("lastName").value.trim();
+        const firstName = document.getElementById("firstName").value.trim();
+        const middleName = document.getElementById("middleName").value.trim();
+        const labId = document.getElementById("labId").value.trim();
+        const date = document.querySelector("input[type='date']").value.trim();
+        const resultType = document.querySelector("input[placeholder='Type of result']").value.trim();
+        const resultCode = document.getElementById("resultCode").value.trim();
+        const file = document.querySelector("input[type='file']").files[0];
+      
+        if (!lastName || !firstName || !labId || !date || !resultType || !file) {
+          alert("❗ Please complete all required fields and upload a file.");
+          return;
+        }
+      
+        try {
+          const base64PDF = await toBase64(file);
+      
+          const patientRef = doc(db, "patientLab", labId);
+          await setDoc(patientRef, {
+            laboratoryId: labId,
+            lastName,
+            firstName,
+            middleName
+          }, { merge: true });
+      
+          const labResultsRef = collection(patientRef, "labResults");
+          await addDoc(labResultsRef, {
+            date,
+            resultType,
+            resultCode,
+            pdfBase64: base64PDF,
+            timestamp: serverTimestamp()
+          });
+      
+          alert("✅ Lab result saved under patientLab → labResults.");
+        } catch (err) {
+          console.error("Error saving result:", err);
+          alert("❌ Failed to save lab result.");
+        }
+      });
       </script>
+      
       
 </body>
 </html>

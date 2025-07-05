@@ -80,114 +80,179 @@
     </div>
 
   <script src="../assets/js/menu.js"></script>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-  
-    const firebaseConfig = {
-      apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
-      authDomain: "ptsi-system-293aa.firebaseapp.com",
-      projectId: "ptsi-system-293aa",
-      storageBucket: "ptsi-system-293aa.firebasestorage.app",
-      messagingSenderId: "229290736029",
-      appId: "1:229290736029:web:da2246786b173fddcd1774",
-      measurementId: "G-2CEM231Z6K"
-    };
-  
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const tableBody = document.querySelector(".user-table tbody");
-    const searchInput = document.querySelector(".search-bar");
-    let allResults = [];
-  
-    async function loadLabResults() {
-      const querySnapshot = await getDocs(collection(db, "labResults"));
-      allResults = [];
-  
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        data.id = docSnap.id;
-        allResults.push(data);
-      });
-  
-      renderResults(allResults);
-    }
-  
-    function renderResults(results) {
-      tableBody.innerHTML = "";
-  
-      if (results.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6">No lab results found</td></tr>`;
-        return;
-      }
-  
-      results.forEach(data => {
-        const row = document.createElement("tr");
-  
-        row.innerHTML = `
-          <td>${data.laboratoryId || "-"}</td>
-          <td>${data.patientName || "-"}</td>
-          <td>${data.date || "-"}</td>
-          <td>${data.resultType || "-"}</td>
-          <td>
-            ${data.pdfBase64 ? `
-              <a href="#" class="download-link" data-base64="${data.pdfBase64}">
-                DOWNLOAD PDF <img src="../assets/img/download-icon.png" alt="Download" class="download-icon" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;">
-              </a>` : "No file"}
-          </td>
-          <td>
-            <a href="labresult_edit_admin.html" class="edit-btn" data-id="${data.id}">Edit</a>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-            <button class="delete-btn" data-id="${data.id}">Delete</button>
-          </td>
-        `;
-  
-        tableBody.appendChild(row);
+const firebaseConfig = {
+  apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+  authDomain: "ptsi-system-293aa.firebaseapp.com",
+  projectId: "ptsi-system-293aa",
+  storageBucket: "ptsi-system-293aa.appspot.com",
+  messagingSenderId: "229290736029",
+  appId: "1:229290736029:web:da2246786b173fddcd1774",
+  measurementId: "G-2CEM231Z6K"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const tableBody = document.querySelector(".user-table tbody");
+const searchInput = document.querySelector(".search-bar");
+let allResults = [];
+
+async function loadLabResults() {
+  tableBody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
+  allResults = [];
+
+  const patientsSnapshot = await getDocs(collection(db, "patientLab"));
+
+  for (const patientDoc of patientsSnapshot.docs) {
+    const patientData = patientDoc.data();
+    const labResultsRef = collection(db, "patientLab", patientDoc.id, "labResults");
+    const labResultsSnap = await getDocs(labResultsRef);
+
+    labResultsSnap.forEach(resultDoc => {
+      const resultData = resultDoc.data();
+      const fullName = `${patientData.lastName || ""}, ${patientData.firstName || ""} ${patientData.middleName || ""}`;
+      allResults.push({
+        id: resultDoc.id,
+        patientId: patientDoc.id,
+        fullName,
+        laboratoryId: patientData.laboratoryId || "-",
+        date: resultData.date || "-",
+        resultType: resultData.resultType || "-",
+        pdfBase64: resultData.pdfBase64 || null
       });
-  
-      document.querySelectorAll(".download-link").forEach(link => {
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          const base64Data = link.getAttribute("data-base64");
-          downloadPDF(base64Data, "labresult.pdf");
-        });
-      });
-    }
-  
-    function downloadPDF(base64Data, filename) {
-      const base64 = base64Data.split(',')[1];
-      const binary = atob(base64);
-      const len = binary.length;
-      const buffer = new Uint8Array(len);
-  
-      for (let i = 0; i < len; i++) {
-        buffer[i] = binary.charCodeAt(i);
-      }
-  
-      const blob = new Blob([buffer], { type: 'application/pdf' });
-      const blobURL = URL.createObjectURL(blob);
-  
-      const a = document.createElement('a');
-      a.href = blobURL;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-  
-    searchInput.addEventListener("input", () => {
-      const query = searchInput.value.trim().toLowerCase();
-      const filtered = allResults.filter(item => {
-        const name = (item.patientName || "").toLowerCase();
-        const labId = (item.laboratoryId || "").toLowerCase();
-        return name.includes(query) || labId.includes(query);
-      });
-      renderResults(filtered);
     });
+  }
+
+  renderResults(allResults);
+}
+
+function renderResults(results) {
+  tableBody.innerHTML = "";
+
+  if (results.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="6">No lab results found</td></tr>`;
+    return;
+  }
+
+  const grouped = {};
+  results.forEach(data => {
+    if (!grouped[data.patientId]) {
+      grouped[data.patientId] = {
+        fullName: data.fullName,
+        laboratoryId: data.laboratoryId,
+        results: []
+      };
+    }
+    grouped[data.patientId].results.push(data);
+  });
+
+  Object.values(grouped).forEach(user => {
+    user.results.forEach((res, index) => {
+      const row = document.createElement("tr");
+
+      const fileCell = res.pdfBase64
+        ? `<a href="#" class="download-link" data-base64="${res.pdfBase64}">
+              PDF <img src="../assets/img/download-icon.png" class="download-icon" style="width:16px;height:16px;margin-left:4px;">
+           </a>`
+        : "No file";
+
+      row.innerHTML = `
+        ${index === 0 ? `<td rowspan="${user.results.length}">${user.laboratoryId}</td><td rowspan="${user.results.length}">${user.fullName}</td>` : ''}
+        <td>${res.date}</td>
+        <td>${res.resultType}</td>
+        <td>${fileCell}</td>
+        <td>
+          <a href="labresult_edit_admin.html" class="edit-btn" data-id="${res.id}" data-patient-id="${res.patientId}">Edit</a>
+          <button class="delete-btn" data-id="${res.id}" data-patient-id="${res.patientId}">Delete</button>
+        </td>
+      `;
+
+      tableBody.appendChild(row);
+    });
+  });
+
+  document.querySelectorAll(".download-link").forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const base64Data = link.getAttribute("data-base64");
+      downloadPDF(base64Data, "labresult.pdf");
+    });
+  });
+
+  document.querySelectorAll(".edit-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      localStorage.setItem("editingLabId", btn.dataset.id);
+      localStorage.setItem("editingPatientId", btn.dataset.patientId);
+    });
+  });
   
-    loadLabResults();
-  </script>
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const labId = btn.dataset.id;
+      const patientId = btn.dataset.patientId;
   
+      const confirmed = confirm("Are you sure you want to delete this lab result?");
+      if (!confirmed) return;
   
+      try {
+        const labRef = doc(db, "patientLab", patientId, "labResults", labId);
+        await deleteDoc(labRef);
+        alert("🗑️ Lab result deleted successfully.");
+        loadLabResults(); // Refresh the table
+      } catch (err) {
+        console.error("Failed to delete lab result:", err);
+        alert("❌ Failed to delete lab result.");
+      }
+    });
+  });
+  
+}
+
+
+function downloadPDF(base64Data, filename) {
+  const base64 = base64Data.split(',')[1];
+  const binary = atob(base64);
+  const len = binary.length;
+  const buffer = new Uint8Array(len);
+
+  for (let i = 0; i < len; i++) {
+    buffer[i] = binary.charCodeAt(i);
+  }
+
+  const blob = new Blob([buffer], { type: 'application/pdf' });
+  const blobURL = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = blobURL;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.trim().toLowerCase();
+  const filtered = allResults.filter(item => {
+    const name = (item.fullName || "").toLowerCase();
+    const labId = (item.laboratoryId || "").toLowerCase();
+    return name.includes(query) || labId.includes(query);
+  });
+  renderResults(filtered);
+});
+
+loadLabResults();
+</script>
+
 </body>
 </html>
