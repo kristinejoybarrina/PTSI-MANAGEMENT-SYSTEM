@@ -89,21 +89,73 @@
 
     <script src="../assets/js/menu.js"></script>
     <script type="module">
-        document.getElementById("labresultCode").addEventListener("submit", (e) => {
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import {
+          getFirestore,
+          collection,
+          addDoc,
+          serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+          authDomain: "ptsi-system-293aa.firebaseapp.com",
+          projectId: "ptsi-system-293aa",
+          storageBucket: "ptsi-system-293aa.appspot.com",
+          messagingSenderId: "229290736029",
+          appId: "1:229290736029:web:da2246786b173fddcd1774",
+          measurementId: "G-2CEM231Z6K"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+      
+        const username = localStorage.getItem("loggedInUsername");
+      
+        // Redirect to login if not logged in
+        if (!username) {
+          alert("⚠️ You must be logged in to access this page.");
+          window.location.href = "../index.html";
+        }
+      
+        // Log activity
+        async function logActivity(action, page) {
+          try {
+            await addDoc(collection(db, "recentActivities"), {
+              username,
+              action,
+              page,
+              timestamp: serverTimestamp()
+            });
+          } catch (err) {
+            console.error("❌ Failed to log activity:", err);
+          }
+        }
+      
+        // Log page visit
+        logActivity("Visited Lab Result Page", "Lab Result");
+      
+        // Handle form submission
+        document.getElementById("labresultCode").addEventListener("submit", async (e) => {
           e.preventDefault();
       
           const code = document.getElementById("labresult-code").value.trim();
-      
           if (!/^\d{6}$/.test(code)) {
             alert("❌ Please enter a valid 6-digit code.");
             return;
           }
-      
-          // Save the code in sessionStorage and redirect
           sessionStorage.setItem("labResultCode", code);
-          window.location.href = "labresult.html"; // ⬅️ Redirect here
+          window.location.href = "labresult.html";
+        });
+      
+        // ✅ Logout functionality
+        const logoutBtn = document.getElementById("logout");
+        logoutBtn?.addEventListener("click", () => {
+          localStorage.removeItem("loggedInUsername");
+          alert("👋 You have been logged out.");
+          window.location.href = "../index.html";
         });
       </script>
-       
+      
 </body>
 </html>

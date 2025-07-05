@@ -63,22 +63,34 @@
         </div>
     </div>
 
+    <!-- Inside .main-content -->
     <div class="activity">
-        <div class="activity-icon"></div>
-            <h2>Recent Activities</h2>
-        </div>
+      <div class="activity-header">
+        <img src="../assets/img/activity-icon.png" alt="Activity Icon" class="activity-icon">
+        <h2>Recent Activities</h2>
+      </div>
+      <div id="activityList"></div>
     </div>
+
   </div>
   <script src="../assets/js/menu.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      orderBy,
+      limit,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
   
     const firebaseConfig = {
       apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
       authDomain: "ptsi-system-293aa.firebaseapp.com",
       projectId: "ptsi-system-293aa",
-      storageBucket: "ptsi-system-293aa.firebasestorage.app",
+      storageBucket: "ptsi-system-293aa.appspot.com",
       messagingSenderId: "229290736029",
       appId: "1:229290736029:web:da2246786b173fddcd1774",
       measurementId: "G-2CEM231Z6K"
@@ -88,11 +100,16 @@
     const db = getFirestore(app);
   
     window.onload = async () => {
-      const savedUsername = localStorage.getItem('loggedInUsername');
-      const usernameElement = document.getElementById('username');
-      const profileImage = document.getElementById('profileImage');
+      const savedUsername = localStorage.getItem("loggedInUsername");
   
-      if (!savedUsername || !usernameElement || !profileImage) return;
+      if (!savedUsername) {
+        alert("⚠️ You must be logged in to access the dashboard.");
+        window.location.href = "../index.html";
+        return;
+      }
+  
+      const usernameElement = document.getElementById("username");
+      const profileImage = document.getElementById("profileImage");
   
       try {
         const q = query(collection(db, "registrationForm"), where("username", "==", savedUsername));
@@ -102,7 +119,6 @@
           const userData = snapshot.docs[0].data();
           usernameElement.textContent = userData.firstname || savedUsername;
   
-          // ✅ SHOW the uploaded profile image
           if (userData.imageBase64?.startsWith("data:image")) {
             profileImage.src = userData.imageBase64;
           } else {
@@ -116,15 +132,59 @@
         console.error("🔥 Error fetching profile image:", err);
         profileImage.src = "../assets/img/profile-icon.png";
       }
+  
+      // Load recent activities
+      try {
+        const activityList = document.getElementById("activityList");
+        activityList.innerHTML = "<p>Loading recent activities...</p>";
+  
+        const activityQuery = query(
+          collection(db, "recentActivities"),
+          where("username", "==", savedUsername),
+          orderBy("timestamp", "desc"),
+          limit(5)
+        );
+  
+        const activitySnapshot = await getDocs(activityQuery);
+        activityList.innerHTML = "";
+  
+        if (activitySnapshot.empty) {
+          activityList.innerHTML = "<p>No recent activities found.</p>";
+        } else {
+          activitySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const time = data.timestamp?.toDate().toLocaleString() || "Unknown time";
+  
+            const pageDisplay =
+              data.page === "Lab Result" ? "Lab Result" :
+              data.page === "Dashboard" ? "Dashboard" :
+              data.page === "Appointment" ? "Appointment" :
+              data.page;
+  
+            const item = document.createElement("div");
+            item.className = "activity-item";
+            item.innerHTML = `
+              <p><strong>Action:</strong> ${data.action}</p>
+              <p><strong>Page:</strong> <code>${pageDisplay}</code></p>
+              <p style="font-size: 0.9em; color: gray;"><strong>Time:</strong> ${time}</p>
+            `;
+            activityList.appendChild(item);
+          });
+        }
+      } catch (err) {
+        console.error("❌ Error loading activities:", err);
+        document.getElementById("activityList").innerHTML = "<p style='color:red;'>Failed to load activities.</p>";
+      }
+  
+      // Logout functionality
+      const logoutBtn = document.getElementById("logout");
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("loggedInUsername");
+        alert("👋 You have been logged out.");
+        window.location.href = "../index.html";
+      });
     };
   </script>
   
-
-  <script>
-    document.getElementById('logout')?.addEventListener('click', () => {
-      localStorage.removeItem('loggedInUsername');
-      window.location.href = 'login.html';
-    });
-  </script>
 </body>
 </html>

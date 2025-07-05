@@ -58,7 +58,8 @@
           <input type="file" id="fileInput" name="image" accept="image/*">
           <i class="fa fa-camera"></i>
         </div>
-        <h3 id="cardName"></h3>             
+        <h3 id="cardName"></h3>        
+
         <button id="updateBtn">Update Photo</button>
         <button id="removeBtn" style="margin-top: 10px;">Remove</button>
     </div>
@@ -105,145 +106,154 @@
 
     <script src="../assets/js/menu.js"></script>
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import {
-          getFirestore,
-          collection,
-          query,
-          where,
-          getDocs,
-          doc,
-          updateDoc
-        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-      
-        const firebaseConfig = {
-          apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
-          authDomain: "ptsi-system-293aa.firebaseapp.com",
-          projectId: "ptsi-system-293aa",
-          storageBucket: "ptsi-system-293aa.firebasestorage.app",
-          messagingSenderId: "229290736029",
-          appId: "1:229290736029:web:da2246786b173fddcd1774"
-        };
-      
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-      
-        let userDocId = null;
-      
-        window.onload = async () => {
-          const savedUsername = localStorage.getItem("loggedInUsername");
-          if (!savedUsername) return;
-      
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        query,
+        where,
+        getDocs,
+        doc,
+        updateDoc
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    
+      const firebaseConfig = {
+        apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+        authDomain: "ptsi-system-293aa.firebaseapp.com",
+        projectId: "ptsi-system-293aa",
+        storageBucket: "ptsi-system-293aa.firebasestorage.app",
+        messagingSenderId: "229290736029",
+        appId: "1:229290736029:web:da2246786b173fddcd1774"
+      };
+    
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+    
+      // 🚫 Redirect if not logged in
+      const username = localStorage.getItem("loggedInUsername");
+      if (!username) {
+        alert("⚠️ You must be logged in to access this page.");
+        window.location.href = "../index.html";
+      }
+    
+      let userDocId = null;
+    
+      window.onload = async () => {
+        try {
+          const q = query(collection(db, "registrationForm"), where("username", "==", username));
+          const snapshot = await getDocs(q);
+    
+          if (!snapshot.empty) {
+            const userDoc = snapshot.docs[0];
+            userDocId = userDoc.id;
+            const userData = userDoc.data();
+    
+            // Profile image
+            const profileImage = document.getElementById("profileImage");
+            if (userData.imageBase64?.startsWith("data:image")) {
+              profileImage.src = userData.imageBase64;
+            }
+    
+            // Profile card name
+            document.getElementById("cardName").textContent = `${userData.firstname} ${userData.lastname}`;
+
+    
+            // User details
+            document.getElementById("fullName").value = `${userData.firstname} ${userData.middlename || ""} ${userData.lastname}`.trim();
+            document.getElementById("email").value = userData.email || "";
+            document.getElementById("phone").value = userData.phone || "";
+            document.getElementById("age").value = userData.age || "";
+            document.getElementById("gender").value = userData.gender || "";
+          }
+        } catch (error) {
+          console.error("🔥 Error loading user data:", error);
+        }
+      };
+    
+      // 🔄 Trigger file input on update photo click
+      document.getElementById("updateBtn").addEventListener("click", () => {
+        document.getElementById("fileInput").click();
+      });
+    
+      // 📸 Handle profile photo change
+      document.getElementById("fileInput").addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        if (!file || !userDocId) return;
+    
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64String = reader.result;
+          document.getElementById("profileImage").src = base64String;
+    
           try {
-            const q = query(collection(db, "registrationForm"), where("username", "==", savedUsername));
-            const snapshot = await getDocs(q);
-      
-            if (!snapshot.empty) {
-              const userDoc = snapshot.docs[0];
-              userDocId = userDoc.id;
-              const userData = userDoc.data();
-      
-              // Profile image
-              const profileImage = document.getElementById("profileImage");
-              if (userData.imageBase64?.startsWith("data:image")) {
-                profileImage.src = userData.imageBase64;
-              }
-      
-              // Profile card name
-              document.querySelectorAll("#cardName").forEach(el => {
-                el.textContent = `${userData.firstname} ${userData.lastname}`;
-              });
-      
-              // User details
-              document.getElementById("fullName").value = `${userData.firstname} ${userData.middlename || ""} ${userData.lastname} ${userData.suffix || ""}`.trim();
-              document.getElementById("email").value = userData.email || "";
-              document.getElementById("phone").value = userData.phone || "";
-              document.getElementById("age").value = userData.age || "";
-              document.getElementById("gender").value = userData.gender || "";
-            }
+            await updateDoc(doc(db, "registrationForm", userDocId), {
+              imageBase64: base64String
+            });
+            alert("✅ Profile photo updated!");
           } catch (error) {
-            console.error("🔥 Error loading user data:", error);
+            console.error("Error updating profile photo:", error);
           }
         };
-      
-        // 🔄 Trigger file input on update photo click
-        document.getElementById("updateBtn").addEventListener("click", () => {
-          document.getElementById("fileInput").click();
-        });
-      
-        // 📸 Handle profile photo change
-        document.getElementById("fileInput").addEventListener("change", async (event) => {
-          const file = event.target.files[0];
-          if (!file || !userDocId) return;
-      
-          const reader = new FileReader();
-          reader.onloadend = async () => {
-            const base64String = reader.result;
-            document.getElementById("profileImage").src = base64String;
-      
-            try {
-              await updateDoc(doc(db, "registrationForm", userDocId), {
-                imageBase64: base64String
-              });
-              alert("✅ Profile photo updated!");
-            } catch (error) {
-              console.error("Error updating profile photo:", error);
-            }
-          };
-          reader.readAsDataURL(file);
-        });
-      
-        // ❌ Remove photo and reset to default
-        document.getElementById("removeBtn").addEventListener("click", async () => {
-          const defaultImage = "../assets/img/noprofil.jpg";
-          document.getElementById("profileImage").src = defaultImage;
-      
-          if (userDocId) {
-            try {
-              await updateDoc(doc(db, "registrationForm", userDocId), {
-                imageBase64: ""
-              });
-              alert("🗑️ Profile photo removed!");
-            } catch (error) {
-              console.error("Error removing profile photo:", error);
-            }
+        reader.readAsDataURL(file);
+      });
+    
+      // ❌ Remove photo and reset to default
+      document.getElementById("removeBtn").addEventListener("click", async () => {
+        const defaultImage = "../assets/img/noprofil.jpg";
+        document.getElementById("profileImage").src = defaultImage;
+    
+        if (userDocId) {
+          try {
+            await updateDoc(doc(db, "registrationForm", userDocId), {
+              imageBase64: ""
+            });
+            alert("🗑️ Profile photo removed!");
+          } catch (error) {
+            console.error("Error removing profile photo:", error);
           }
-        });
-      
-        document.getElementById("saveBtn").addEventListener("click", async () => {
-            if (!userDocId) return;
-          
-            const fullName = document.getElementById("fullName").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-            const age = document.getElementById("age").value.trim();
-            const gender = document.getElementById("gender").value;
-          
-            const [firstname, ...rest] = fullName.split(" ");
-            const lastname = rest.pop() || "";
-            const middlename = rest.join(" ");
-          
-            try {
-              await updateDoc(doc(db, "registrationForm", userDocId), {
-                firstname,
-                middlename,
-                lastname,
-                email,
-                phone,
-                age,
-                gender
-              });
-          
-              // ✅ UPDATE UI after saving
-              document.getElementById("cardName").textContent = `${firstname} ${lastname}`;
-              
-              alert("✅ User details updated!");
-            } catch (error) {
-              console.error("Error saving details:", error);
-            }
+        }
+      });
+    
+      // 💾 Save user details
+      document.getElementById("saveBtn").addEventListener("click", async () => {
+        if (!userDocId) return;
+    
+        const fullName = document.getElementById("fullName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const age = document.getElementById("age").value.trim();
+        const gender = document.getElementById("gender").value;
+    
+        const [firstname, ...rest] = fullName.split(" ");
+        const lastname = rest.pop() || "";
+        const middlename = rest.join(" ");
+    
+        try {
+          await updateDoc(doc(db, "registrationForm", userDocId), {
+            firstname,
+            middlename,
+            lastname,
+            email,
+            phone,
+            age,
+            gender
           });
-          
-      </script>
+          document.getElementById("cardName").textContent = `${firstname} ${middlename} ${lastname}`;
+          alert("✅ User details updated!");
+        } catch (error) {
+          console.error("Error saving details:", error);
+        }
+      });
+    
+      // 🚪 Logout functionality
+      const logoutBtn = document.getElementById("logout");
+      logoutBtn?.addEventListener("click", () => {
+        localStorage.removeItem("loggedInUsername");
+        alert("👋 You have been logged out.");
+        window.location.href = "../index.html";
+      });
+    </script>
+    
       
 </body>
 </html>

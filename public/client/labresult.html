@@ -99,88 +99,102 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
     
-      const code = sessionStorage.getItem("labResultCode");
+      async function loadLabResult() {
+        const code = sessionStorage.getItem("labResultCode");
     
-      console.log("📦 Retrieved labResultCode:", code);
+        console.log("📦 Retrieved labResultCode:", code);
     
-      if (!code || code.trim() === "") {
-        alert("⚠️ No code found. Please enter your lab result code first.");
-        window.location.href = "labresult-login.html";
-      }
+        if (!code || code.trim() === "") {
+          alert("⚠️ No code found. Please enter your lab result code first.");
+          window.location.href = "labresult-login.html";
+          return;
+        }
     
-      let match = null;
+        let match = null;
     
-      const patientSnapshot = await getDocs(collection(db, "patientLab"));
+        const patientSnapshot = await getDocs(collection(db, "patientLab"));
     
-      for (const patientDoc of patientSnapshot.docs) {
-        const patientData = patientDoc.data();
+        for (const patientDoc of patientSnapshot.docs) {
+          const patientData = patientDoc.data();
     
-        const labResultsSnapshot = await getDocs(
-          collection(db, "patientLab", patientDoc.id, "labResults")
-        );
+          const labResultsSnapshot = await getDocs(
+            collection(db, "patientLab", patientDoc.id, "labResults")
+          );
     
-        for (const labDoc of labResultsSnapshot.docs) {
-          const labData = labDoc.data();
+          for (const labDoc of labResultsSnapshot.docs) {
+            const labData = labDoc.data();
     
-          // You used "editCode" in your search. But you SAVE "resultCode" in your admin form.
-          if (labData.resultCode === code) {
-            match = {
-              ...labData,
-              patientName: `${patientData.firstName || ''} ${patientData.middleName || ''} ${patientData.lastName || ''}`.trim(),
-              laboratoryId: patientData.laboratoryId || "Unknown"
-            };
-            break;
+            if (labData.resultCode === code) {
+              match = {
+                ...labData,
+                patientName: `${patientData.firstName || ''} ${patientData.middleName || ''} ${patientData.lastName || ''}`.trim(),
+                laboratoryId: patientData.laboratoryId || "Unknown"
+              };
+              break;
+            }
           }
+    
+          if (match) break;
         }
     
-        if (match) break;
-      }
-    
-      if (!match) {
-        alert("❌ Invalid code. No matching lab result found.");
-        window.location.href = "labresult-login.html";
-      }
-    
-      const tbody = document.getElementById("labResultsBody");
-      const row = document.createElement("tr");
-    
-      row.innerHTML = `
-        <td class="table-data-cell">#${match.laboratoryId}</td>
-        <td class="table-data-cell">${match.date}</td>
-        <td class="table-data-cell">${match.resultType}</td>
-        <td class="table-data-cell">
-          <a href="#" class="download-link">labresult.pdf <i class="fas fa-download download-icon"></i></a>
-        </td>
-      `;
-    
-      tbody.appendChild(row);
-      document.getElementById("patientName").textContent = match.patientName;
-    
-      function downloadPDF(base64Data, filename) {
-        const base64 = base64Data.split(',')[1];
-        const binary = atob(base64);
-        const len = binary.length;
-        const buffer = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-          buffer[i] = binary.charCodeAt(i);
+        if (!match) {
+          alert("❌ Invalid code. No matching lab result found.");
+          window.location.href = "labresult-login.html";
+          return;
         }
     
-        const blob = new Blob([buffer], { type: 'application/pdf' });
-        const blobURL = URL.createObjectURL(blob);
+        const tbody = document.getElementById("labResultsBody");
+        const row = document.createElement("tr");
     
-        const a = document.createElement('a');
-        a.href = blobURL;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        row.innerHTML = `
+          <td class="table-data-cell">#${match.laboratoryId}</td>
+          <td class="table-data-cell">${match.date}</td>
+          <td class="table-data-cell">${match.resultType}</td>
+          <td class="table-data-cell">
+            <a href="#" class="download-link">labresult.pdf <i class="fas fa-download download-icon"></i></a>
+          </td>
+        `;
+    
+        tbody.appendChild(row);
+        document.getElementById("patientName").textContent = match.patientName;
+    
+        function downloadPDF(base64Data, filename) {
+          const base64 = base64Data.split(',')[1];
+          const binary = atob(base64);
+          const len = binary.length;
+          const buffer = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            buffer[i] = binary.charCodeAt(i);
+          }
+    
+          const blob = new Blob([buffer], { type: 'application/pdf' });
+          const blobURL = URL.createObjectURL(blob);
+    
+          const a = document.createElement('a');
+          a.href = blobURL;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+    
+        row.querySelector(".download-link").addEventListener("click", (e) => {
+          e.preventDefault();
+          downloadPDF(match.pdfBase64, `LabResult-${code}.pdf`);
+        });
       }
     
-      row.querySelector(".download-link").addEventListener("click", (e) => {
-        e.preventDefault();
-        downloadPDF(match.pdfBase64, `LabResult-${code}.pdf`);
+      loadLabResult();
+    
+      // ✅ Logout Functionality
+      const logoutBtn = document.getElementById("logout");
+      logoutBtn?.addEventListener("click", () => {
+        localStorage.removeItem("loggedInUsername");
+        alert("👋 You have been logged out.");
+        window.location.href = "../index.html";
       });
     </script>
+    
     
 </body>
 </html>

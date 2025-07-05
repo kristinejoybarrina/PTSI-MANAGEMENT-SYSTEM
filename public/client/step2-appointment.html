@@ -162,5 +162,15 @@
 <script>
     document.addEventListener('DOMContentLoaded', loadAddressData);
 </script>
+
+<!-- 👇 Add here -->
+<script type="module">
+  const logoutBtn = document.getElementById("logout");
+  logoutBtn?.addEventListener("click", () => {
+    localStorage.removeItem("loggedInUsername");
+    alert("👋 You have been logged out.");
+    window.location.href = "../index.html";
+  });
+</script>
 </body>
 </html>

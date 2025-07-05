@@ -82,6 +82,74 @@
     </form>
     </div>
     <script src="../assets/js/menu.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import {
+          getFirestore,
+          collection,
+          addDoc,
+          serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+          authDomain: "ptsi-system-293aa.firebaseapp.com",
+          projectId: "ptsi-system-293aa",
+          storageBucket: "ptsi-system-293aa.appspot.com",
+          messagingSenderId: "229290736029",
+          appId: "1:229290736029:web:da2246786b173fddcd1774",
+          measurementId: "G-2CEM231Z6K"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+      
+        const username = localStorage.getItem("loggedInUsername");
+      
+        // ✅ Redirect if not logged in
+        if (!username) {
+          alert("⚠️ You must be logged in to access this page.");
+          window.location.href = "../index.html";
+        }
+      
+        // ✅ Log activity
+        async function logActivity(action, page) {
+          try {
+            await addDoc(collection(db, "recentActivities"), {
+              username,
+              action,
+              page,
+              timestamp: serverTimestamp()
+            });
+          } catch (err) {
+            console.error("❌ Failed to log activity:", err);
+          }
+        }
+      
+        // ✅ Log page visit
+        logActivity("Visited Appointment Page", "appointment");
+      
+        // ✅ Log form submission
+        document.getElementById("appointment-form")?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const date = document.getElementById("date")?.value;
+          const time = document.getElementById("time")?.value;
+          if (date && time) {
+            await logActivity(`Selected Appointment: ${date} at ${time}`, "appointment");
+            alert("✅ Appointment info saved! Proceeding to next step...");
+            // window.location.href = "patient-details.html";
+          }
+        });
+      
+        // ✅ Logout functionality
+        const logoutBtn = document.getElementById("logout");
+        logoutBtn?.addEventListener("click", () => {
+          localStorage.removeItem("loggedInUsername");
+          alert("👋 You have been logged out.");
+          window.location.href = "../index.html";
+        });
+      </script>
+      
 </body>
 </html>
 

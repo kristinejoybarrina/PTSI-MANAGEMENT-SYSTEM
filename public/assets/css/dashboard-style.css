@@ -453,5 +453,41 @@ cursor: pointer;
   }
 }
 
+.activity {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.activity-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.activity-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-item {
+  padding: 10px 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border-left: 4px solid #0a1b52;
+  margin-bottom: 5px;
+}
+
+.activity-item p {
+  margin: 4px 0;
+}
 
 
