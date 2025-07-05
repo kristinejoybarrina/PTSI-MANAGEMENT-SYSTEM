@@ -43,7 +43,8 @@
             <span><img src="../assets/img/notif-icon.png"></span>
             <span>
                 <a href="profile.html">
-                    <img src="../assets/img/profile-icon.png">
+                <img id="profileImage" src="../assets/img/profile-icon.png" style="width: 32px; height: 32px; border-radius: 50%;" />
+
                 </a>
                 </span>
           </div>
@@ -128,6 +129,31 @@
     
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
+
+            const usernameElement = document.getElementById("username");
+      const profileImage = document.getElementById("profileImage");
+  
+      try {
+        const q = query(collection(db, "registrationForm"), where("username", "==", savedUsername));
+        const snapshot = await getDocs(q);
+  
+        if (!snapshot.empty) {
+          const userData = snapshot.docs[0].data();
+          usernameElement.textContent = userData.firstname || savedUsername;
+  
+          if (userData.imageBase64?.startsWith("data:image")) {
+            profileImage.src = userData.imageBase64;
+          } else {
+            profileImage.src = "../assets/img/profile-icon.png";
+          }
+        } else {
+          usernameElement.textContent = savedUsername;
+          profileImage.src = "../assets/img/profile-icon.png";
+        }
+      } catch (err) {
+        console.error("Error fetching profile image:", err);
+        profileImage.src = "../assets/img/profile-icon.png";
+      }
     
       // Redirect if not logged in
       const username = localStorage.getItem("loggedInUsername");
