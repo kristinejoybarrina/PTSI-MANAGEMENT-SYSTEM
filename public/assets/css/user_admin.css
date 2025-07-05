@@ -969,7 +969,7 @@ cursor: pointer;
 
 .modal-content {
     background-color: #fff;
-    margin: 3% auto;
+    margin: 2% auto;
     padding: 30px;
     border-radius: 10px; /* Match sidebar rounding */
     width: 100%;
@@ -1000,12 +1000,29 @@ cursor: pointer;
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #333;
+    color: #000000;
 }
 
-.form-group input,
+.form-group input {
+    width: 97%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Source Serif Pro', serif; /* Match site font */
+}
+
+.modal-content h2 {
+    font-size: 26px;
+    color: #0a1b52;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: 'Times New Roman', serif;
+}
+
+
 .form-group select {
-    width: 100%;
+    width: 102%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
