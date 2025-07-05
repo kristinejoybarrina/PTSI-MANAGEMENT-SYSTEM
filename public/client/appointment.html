@@ -141,17 +141,38 @@
 
         logActivity("Visited Appointment Page", "appointment");
 
-        document.getElementById("appointment-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const date = document.getElementById("date").value;
-            const time = document.getElementById("time").value;
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedData = sessionStorage.getItem('appointmentStep1');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            document.getElementById('date').value = data.date || '';
+            document.getElementById('time').value = data.time || '';
+        }
+    });
 
-            if (date && time) {
-                await logActivity(`Selected Appointment: ${date} at ${time}`, "appointment");
-                alert("✅ Appointment info saved! Proceeding to next step...");
-                // window.location.href = "patient-details.html";
-            }
-        });
+    document.getElementById('appointment-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+
+    if (!date || !time) {
+        alert("Please select both date and time.");
+        return;
+    }
+
+        // Save to sessionStorage instead of database
+        const appointmentData = {
+            prefTime: time,
+            prefDate: date,
+            timestamp: new Date().toISOString()
+        };
+
+        sessionStorage.setItem('appointmentStep1', JSON.stringify(appointmentData));
+            
+        // Navigate to step 2
+        window.location.href = 'step2-appointment.html'; 
+    }); 
 
         document.getElementById("logout").addEventListener("click", () => {
             localStorage.removeItem("loggedInUsername");
