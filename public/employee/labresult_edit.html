@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Admin</title>
+    <link rel="stylesheet" href="../assets/css/labresult_edit_admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://philtbsociety.org/wp-content/uploads/2022/07/cropped-1-PTSI-New-Logo-Original-1-600x786.png" alt="PTSI Logo" class="logo">
+            <h2>PTSI</h2>
+            <div class="sidebar-toggle" id="toggleSidebar">
+                <img src="../assets/img/arrow-left.png" alt="Hide Sidebar">
+            </div>
+        </div>
+        <ul class="menu">
+        <h3>Menu</h3>
+        <li id="dashboard"><i class="icon"><img src="../assets/img/dash-icon.png"></i><h3>Dashboard</h3></li>
+        <li id="user-account"><i class="icon"><img src="../assets/img/account-icon.png"></i><h3>User Account</h3></li>
+        <li id="lab-result"><i class="icon"><img src="../assets/img/lab-result-icon.png"></i><h3>Lab Result</h3></li>
+        <li id="appointment"><i class="icon"><img src="../assets/img/appointment-icon.png"></i><h3>Appointment</h3></li>
+        </ul>
+        <div class="logout" id="logout">
+            <img src="../assets/img/logout-icon.png" alt="Logout Icon">
+            <h3>Logout</h3>
+        </div>
+        
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="header-left">
+              <div class="hamburger" id="hamburger">
+                <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
+              </div>
+              <div class="labresult-title"><strong>User Account</strong></div>
+            </div>
+            <div class="header-icons">
+                <span id="notificationBell" class="notification-bell">
+                    <img src="../assets/img/notif-icon.png" alt="Notification Icon">
+                </span>
+                <span><img src="../assets/img/profile-icon.png" alt="Profile Icon"></span>
+            </div>
+        </div>
+
+        <div id="notificationDropdown" class="notification-dropdown">
+            <div class="notification-header">
+                <h3>Notifications</h3>
+            </div>
+            <div id="notificationItems" class="notification-items"></div>
+            <div class="all-notifications-link-container">
+                <a href="#" class="all-notifications-link">See all</a>
+            </div>
+        </div>
+    
+
+        <form id="editLabForm">
+            <a href="lab_result_admin.html" class="back-icon">
+                <img src="../assets/img/back-icon.png" alt="Back" />
+            </a>
+            <h1>Edit Lab Result</h1>
+        
+            <label>Lab ID:
+              <input type="text" id="labId" name="labId" readonly />
+          </label><br/>
+          
+          <label>First Name:
+            <input type="text" id="firstName" name="firstName" required />
+          </label><br/>
+          
+          <label>Middle Name:
+              <input type="text" id="middleName" name="middleName" />
+          </label><br/>
+          
+          <label>Last Name:
+              <input type="text" id="lastName" name="lastName" required />
+          </label><br/>
+        
+        
+            <label>Date:
+                <input type="date" id="date" name="date" required />
+            </label><br/>
+        
+            <label>Type:
+                <input type="text" id="type" name="type" required />
+            </label><br/>
+            
+            <label>6-Digit Code:
+              <input type="text" id="resultCode" name="resultCode" readonly />
+            </label><br/>
+            
+        
+            <label>File (PDF):
+                <input type="file" id="labFile" name="labFile" accept="application/pdf" />
+            </label><br/>
+        
+            <div class="form-button-container">
+                <button type="submit">Update Lab Result</button>
+            </div>
+        </form>
+        
+
+    <script src="../assets/js/menu.js"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        updateDoc,
+        serverTimestamp
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+      
+      const firebaseConfig = {
+        apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+        authDomain: "ptsi-system-293aa.firebaseapp.com",
+        projectId: "ptsi-system-293aa",
+        storageBucket: "ptsi-system-293aa.firebasestorage.app",
+        messagingSenderId: "229290736029",
+        appId: "1:229290736029:web:da2246786b173fddcd1774",
+        measurementId: "G-2CEM231Z6K"
+      };
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const form = document.getElementById("editLabForm");
+      
+      const labId = localStorage.getItem("editingLabId");
+      const patientId = localStorage.getItem("editingPatientId");
+      
+      if (!labId || !patientId) {
+        alert("No lab result selected.");
+        window.location.href = "lab_result_admin.html";
+      }
+      
+      async function populateForm() {
+        const labRef = doc(db, "patientLab", patientId, "labResults", labId);
+        const labSnap = await getDoc(labRef);
+      
+        const patientRef = doc(db, "patientLab", patientId);
+        const patientSnap = await getDoc(patientRef);
+      
+        if (!labSnap.exists() || !patientSnap.exists()) {
+          alert("Lab result or patient not found.");
+          window.location.href = "lab_result_admin.html";
+          return;
+        }
+      
+        const labData = labSnap.data();
+        const patientData = patientSnap.data();
+      
+        form.labId.value = patientData.laboratoryId || "-";
+        form.firstName.value = patientData.firstName || "";
+        form.middleName.value = patientData.middleName || "";
+        form.lastName.value = patientData.lastName || "";
+        form.date.value = labData.date || "";
+        form.type.value = labData.resultType || "";
+      
+        // 6-digit code logic
+        if (!labData.resultCode) {
+          const generatedCode = generateSixDigitCode();
+          await updateDoc(labRef, { resultCode: generatedCode });
+          form.resultCode.value = generatedCode;
+        } else {
+          form.resultCode.value = labData.resultCode;
+        }
+      }      
+
+      function generateSixDigitCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+      }
+      
+      
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById("labFile");
+        let pdfBase64 = null;
+      
+        if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          pdfBase64 = await toBase64(file);
+        }
+      
+        // Update labResults subcollection
+        const labUpdateData = {
+          date: form.date.value,
+          resultType: form.type.value,
+          lastUpdated: serverTimestamp()
+        };
+      
+        if (pdfBase64) {
+          labUpdateData.pdfBase64 = pdfBase64;
+        }
+      
+        // Update patientLab document (main)
+        const patientUpdateData = {
+          firstName: form.firstName.value,
+          middleName: form.middleName.value,
+          lastName: form.lastName.value
+        };
+      
+        try {
+          const labRef = doc(db, "patientLab", patientId, "labResults", labId);
+          const patientRef = doc(db, "patientLab", patientId);
+      
+          await Promise.all([
+            updateDoc(labRef, labUpdateData),
+            updateDoc(patientRef, patientUpdateData)
+          ]);
+      
+          alert("Lab result and patient info updated!");
+          window.location.href = "lab_result_admin.html";
+      
+        } catch (err) {
+          console.error("Error updating lab result or patient info:", err);
+          alert("Update failed.");
+        }
+      });
+      
+      
+      populateForm();
+      
+      document.getElementById("addAnotherBtn").addEventListener("click", () => {
+        localStorage.setItem("addLabForPatientId", patientId);
+        window.location.href = "labresult_add_admin.html";
+      });
+      </script>
+      
+    
+</body>
+</html>
