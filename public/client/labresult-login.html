@@ -39,22 +39,12 @@
           </div>
     
           <div class="header-icons">
-            <span><img src="../assets/img/notif-icon.png"></span>
             <span>
                 <a href="profile.html">
-                    <img src="../assets/img/profile-icon.png">
+                <img id="profileImage" src="../assets/img/profile-icon.png" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" />
                 </a>
                 </span>
           </div>
-        </div>
-        <div id="notificationDropdown" class="notification-dropdown">
-            <div class="notification-header">
-                <h3>Notifications</h3>
-            </div>
-            <div id="notificationItems" class="notification-items"></div>
-            <div class="all-notifications-link-container">
-                <a href="#" class="all-notifications-link">See all</a>
-            </div>
         </div>
 
         <div class="dashboard">
@@ -89,73 +79,106 @@
 
     <script src="../assets/js/menu.js"></script>
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import {
-          getFirestore,
-          collection,
-          addDoc,
-          serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-      
-        const firebaseConfig = {
-          apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
-          authDomain: "ptsi-system-293aa.firebaseapp.com",
-          projectId: "ptsi-system-293aa",
-          storageBucket: "ptsi-system-293aa.appspot.com",
-          messagingSenderId: "229290736029",
-          appId: "1:229290736029:web:da2246786b173fddcd1774",
-          measurementId: "G-2CEM231Z6K"
-        };
-      
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-      
-        const username = localStorage.getItem("loggedInUsername");
-      
-        // Redirect to login if not logged in
-        if (!username) {
-          alert("⚠️ You must be logged in to access this page.");
-          window.location.href = "../index.html";
-        }
-      
-        // Log activity
-        async function logActivity(action, page) {
-          try {
-            await addDoc(collection(db, "recentActivities"), {
-              username,
-              action,
-              page,
-              timestamp: serverTimestamp()
-            });
-          } catch (err) {
-            console.error("Failed to log activity:", err);
-          }
-        }
-      
-        // Log page visit
-        logActivity("Visited Lab Result Page", "Lab Result");
-      
-        // Handle form submission
-        document.getElementById("labresultCode").addEventListener("submit", async (e) => {
-          e.preventDefault();
-      
-          const code = document.getElementById("labresult-code").value.trim();
-          if (!/^\d{6}$/.test(code)) {
-            alert("Please enter a valid 6-digit code.");
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
+        getFirestore,
+        collection,
+        query,
+        where,
+        getDocs,
+        addDoc,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // ✅ FIREBASE CONFIG
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+        authDomain: "ptsi-system-293aa.firebaseapp.com",
+        projectId: "ptsi-system-293aa",
+        storageBucket: "ptsi-system-293aa.appspot.com",
+        messagingSenderId: "229290736029",
+        appId: "1:229290736029:web:da2246786b173fddcd1774",
+        measurementId: "G-2CEM231Z6K"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.addEventListener("DOMContentLoaded", async () => {
+
+        const savedUsername = localStorage.getItem("loggedInUsername");
+
+        // ✅ Redirect if not logged in
+        if (!savedUsername) {
+            alert("⚠️ You must be logged in to access this page.");
+            window.location.href = "../index.html";
             return;
-          }
-          sessionStorage.setItem("labResultCode", code);
-          window.location.href = "labresult.html";
+        }
+
+        const profileImage = document.getElementById("profileImage");
+
+        // ✅ Load Profile Image
+        try {
+            const q = query(collection(db, "registrationForm"), where("username", "==", savedUsername));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const userData = snapshot.docs[0].data();
+
+                if (userData.imageBase64?.startsWith("data:image")) {
+                    profileImage.src = userData.imageBase64;
+                } else {
+                    profileImage.src = "../assets/img/profile-icon.png";
+                }
+            } else {
+                profileImage.src = "../assets/img/profile-icon.png";
+            }
+        } catch (err) {
+            console.error("🔥 Error fetching profile image:", err);
+            profileImage.src = "../assets/img/profile-icon.png";
+        }
+
+        // ✅ Log Page Visit
+        logActivity("Visited Lab Result Page", "Lab Result");
+
+        // ✅ Lab Result Form Submission
+        document.getElementById("labresultCode").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const code = document.getElementById("labresult-code").value.trim();
+
+            if (!/^\d{6}$/.test(code)) {
+                alert("⚠️ Please enter a valid 6-digit code.");
+                return;
+            }
+
+            sessionStorage.setItem("labResultCode", code);
+            window.location.href = "labresult.html";
         });
-      
-        // Logout functionality
+
+        // ✅ Logout Functionality
         const logoutBtn = document.getElementById("logout");
         logoutBtn?.addEventListener("click", () => {
-          localStorage.removeItem("loggedInUsername");
-          alert("You have been logged out.");
-          window.location.href = "../index.html";
+            localStorage.removeItem("loggedInUsername");
+            alert("👋 You have been logged out.");
+            window.location.href = "../index.html";
         });
-      </script>
+    });
+
+    // ✅ Log Activity Function
+    async function logActivity(action, page) {
+        try {
+            await addDoc(collection(db, "recentActivities"), {
+                username: localStorage.getItem("loggedInUsername"),
+                action,
+                page,
+                timestamp: serverTimestamp()
+            });
+        } catch (err) {
+            console.error("❌ Failed to log activity:", err);
+        }
+    }
+    </script>
       
 </body>
 </html>

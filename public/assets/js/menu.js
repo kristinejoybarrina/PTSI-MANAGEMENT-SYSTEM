@@ -332,64 +332,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// APPOINTMENT FORM SUBMISSION
-
-document.addEventListener('DOMContentLoaded', () => {
-    const schedForm = document.getElementById('appointment-form');
-    const appointForm = document.getElementById('details');
-
-    if (schedForm) {
-        schedForm.addEventListener('submit', function (e) {
-            e.preventDefault(); // Stop default form action
-
-            const schedData = new FormData(schedForm); 
-
-            fetch('/PTSI-Project/php/appointment.php', {
-                method: "POST",
-                body: schedData
-            })
-            .then(response => response.json())
-            .then(data => { 
-                if (data.success) {
-                    window.location.href = data.redirect || '/PTSI-Project/client/step2-appointment.html';
-                } else {
-                    alert("Error storing session data.");
-                }
-            })
-            .catch(error => { // Added error handling
-                console.error('Error:', error);
-                alert("An error occurred while processing your request.");
-            });
-        });
-    }
-
-    if (appointForm) {
-        appointForm.addEventListener('submit', function (e) {
-            e.preventDefault(); // Stop default form action
-
-            const appointData = new FormData(appointForm); 
-
-            fetch('/PTSI-Project/php/step2-appointment.php', {
-                method: "POST",
-                body: appointData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Appointment booked successfully!");
-                    window.location.href = data.redirect || '/PTSI-Project/client/dashboard.html';
-                } else {
-                    alert("Unsuccessful booking");
-                }
-            })
-            .catch(error => { // Added error handling
-                console.error('Error:', error);
-                alert("An error occurred while processing your request.");
-            });
-        });
-    }
-});
-
 // Display username in dashboarddocument.addEventListener("DOMContentLoaded", () => {
     fetch('../php/username_display.php')
         .then(response => response.json())
