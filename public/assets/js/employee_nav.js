@@ -162,6 +162,11 @@
                 if (toggleArrow) {
                     toggleArrow.style.transform = 'rotate(180deg)';
                 }
+
+                // Show hamburger when sidebar is collapsed
+                if (hamburger) {
+                    hamburger.style.display = 'block';
+                }
             }
         }
 
@@ -177,6 +182,11 @@
                     toggleArrow.style.transform = 'rotate(0deg)';
                 }
             }
+
+            // Hide hamburger when sidebar is expanded
+            if (hamburger) {
+                hamburger.style.display = 'none';
+            }
         }
 
         // Handle window resize
@@ -188,7 +198,18 @@
                     mainContent?.classList.remove('sidebar-collapsed');
                 }
             }
-        });
+
+            else {
+            // On desktop, manage hamburger visibility based on sidebar state
+            if (sidebar && hamburger) {
+                if (sidebar.classList.contains('collapsed')) {
+                    hamburger.style.display = 'block';
+                } else {
+                    hamburger.style.display = 'none';
+                }
+            }
+        }
+        }); 
 
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(e) {
