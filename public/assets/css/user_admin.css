@@ -708,33 +708,6 @@ cursor: pointer;
   background-color: #f2f2f2;
 }
 
-.edit-btn {
-  background-color: #0a1b52;
-  color: #fff;
-  border: none;
-  padding: 10px 23px;
-  border-radius: 3px;
-  cursor: pointer;
-  margin-right: 5px;
-  font-weight: bold;
-}
-
-.delete-btn {
-  background-color: #c82333;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-weight: bold;
-
-}
-.actions {
-  display: flex;
-  gap: 8px; /* spacing between buttons */
-  align-items: center;
-}
-
 .filter-select {
     padding: 8px 12px;
     border: 1px solid #ddd;
@@ -744,7 +717,6 @@ cursor: pointer;
     height: 36px;
     margin-top: 10px;
 }
-
 
 /* Hamburger icon (initially hidden) */
 .hamburger {
@@ -983,142 +955,172 @@ cursor: pointer;
   }
 }
 
-/* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
+/* Modal Styles - Unified with Website */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1101; /* Above sidebar and header */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
 
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 30px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+.modal-content {
+    background-color: #fff;
+    margin: 3% auto;
+    padding: 30px;
+    border-radius: 10px; /* Match sidebar rounding */
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Match site shadow depth */
+    font-family: 'Source Serif Pro', serif; /* Match site font */
+}
 
-        .close {
-            position: absolute;
-            right: 20px;
-            top: 15px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
 
-        .close:hover {
-            color: #000;
-        }
+.close:hover {
+    color: black;
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+.form-group {
+    margin-bottom: 20px;
+}
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
 
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Source Serif Pro', serif; /* Match site font */
+}
 
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
 
-        .cancel-btn {
-            background-color: #f0f0f0;
-            color: #333;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-        }
+.cancel-btn {
+    background-color: #D32F2F;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
 
-        .save-btn {
-            background-color: #0a1b52;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-        }
+.save-btn {
+    background-color: #0a1b52;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
 
-        .save-btn:hover {
-            background-color: #142a7a;
-        }
-        
-        .user-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .filter-container {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-select {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            min-width: 150px;
-        }
-        
-        .user-type-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
-        
-        .user-type-badge.admin {
-            background-color: #FFE8E8;
-            color: #D32F2F;
-        }
-        
-        .user-type-badge.employee {
-            background-color: #E3F2FD;
-            color: #1976D2;
-        }
-        
-        .user-type-badge.patient {
-            background-color: #E8F5E9;
-            color: #388E3C;
-        }
-        
-        .actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+.save-btn:hover {
+    background-color: #142a7a;
+}
+
+/* User Controls (Filter and Search) - Unified */
+.user-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filter-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.user-type-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.user-type-badge.admin {
+    background-color: #FFE8E8;
+    color: #D32F2F;
+}
+
+.user-type-badge.employee {
+    background-color: #E3F2FD;
+    color: #1976D2;
+}
+
+.user-type-badge.patient {
+    background-color: #E8F5E9;
+    color: #388E3C;
+}
+
+/* Action Buttons (Edit and Delete) */
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap; /* Keep them in one line */
+    justify-content: center;
+}
+
+.edit-btn, .delete-btn {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+}
+
+.edit-btn {
+    background-color: #0a1b52;
+}
+
+.delete-btn {
+    background-color: #c82333;
+}
+
+.edit-btn:hover {
+    background-color: #142a7a;
+}
+
+.delete-btn:hover {
+    background-color: #a71d2a;
+}
