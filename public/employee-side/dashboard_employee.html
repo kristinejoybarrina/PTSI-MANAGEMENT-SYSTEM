@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/dashboard_admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://philtbsociety.org/wp-content/uploads/2022/07/cropped-1-PTSI-New-Logo-Original-1-600x786.png" alt="PTSI Logo" class="logo">
+            <h2>PTSI</h2>
+            <div class="sidebar-toggle" id="toggleSidebar">
+                <img src="../assets/img/arrow-left.png" alt="Hide Sidebar">
+            </div>
+        </div>
+        <ul class="menu">
+            <h3>Menu</h3>
+            <li id="dashboard"><i class="icon"><img src="../assets/img/dash-icon.png"></i><h3>Dashboard</h3></li>
+            <li id="lab-result"><i class="icon"><img src="../assets/img/lab-result-icon.png"></i><h3>Lab Result</h3></li>
+            <li id="appointment"><i class="icon"><img src="../assets/img/appointment-icon.png"></i><h3>Appointment</h3></li>
+        </ul>
+        <div class="logout" id="logout">
+            <img src="../assets/img/logout-icon.png" alt="Logout Icon">
+            <h3>Logout</h3>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="notification">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="user-profile">
+                    <img src="../assets/img/default-avatar.png" alt="User">
+                    <span>Employee</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <h1>Employee Dashboard</h1>
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #e3f2fd;">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Appointments</h3>
+                        <p id="appointment-count">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #e8f5e9;">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Lab Results</h3>
+                        <p id="labresult-count">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #fff3e0;">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Patients</h3>
+                        <p id="patient-count">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h2>Recent Activity</h2>
+                <div class="activity-list" id="recent-activity">
+                    <!-- Activity items will be added here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+            authDomain: "ptsi-system-293aa.firebaseapp.com",
+            projectId: "ptsi-system-293aa",
+            storageBucket: "ptsi-system-293aa.firebasestorage.app",
+            messagingSenderId: "229290736029",
+            appId: "1:229290736029:web:da2246786b173fddcd1774",
+            measurementId: "G-2CEM231Z6K"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Sidebar toggle functionality
+        document.getElementById('toggleSidebar').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('expanded');
+        });
+
+        // Navigation
+        document.getElementById('dashboard').addEventListener('click', function() {
+            window.location.href = 'dashboard_employee.html';
+        });
+
+        document.getElementById('lab-result').addEventListener('click', function() {
+            window.location.href = 'lab_result_employee.html';
+        });
+
+        document.getElementById('appointment').addEventListener('click', function() {
+            window.location.href = 'appointment_employee.html';
+        });
+
+        // Logout functionality
+        document.getElementById('logout').addEventListener('click', function() {
+            localStorage.removeItem('isEmployee');
+            localStorage.removeItem('loggedInUsername');
+            localStorage.removeItem('employeeId');
+            window.location.href = '../index.html';
+        });
+
+        // Fetch and display statistics
+        async function loadDashboardStats() {
+            try {
+                // Get appointments count
+                const appointmentsSnapshot = await db.collection('appointments').get();
+                document.getElementById('appointment-count').textContent = appointmentsSnapshot.size;
+
+                // Get lab results count
+                const labResultsSnapshot = await db.collection('lab_results').get();
+                document.getElementById('labresult-count').textContent = labResultsSnapshot.size;
+
+                // Get patients count
+                const patientsSnapshot = await db.collection('registrationForm').get();
+                document.getElementById('patient-count').textContent = patientsSnapshot.size;
+
+                // Load recent activities
+                loadRecentActivities();
+            } catch (error) {
+                console.error("Error loading dashboard stats:", error);
+            }
+        }
+
+        // Load recent activities
+        async function loadRecentActivities() {
+            const activityList = document.getElementById('recent-activity');
+            activityList.innerHTML = ''; // Clear existing content
+
+            try {
+                // Get recent appointments
+                const appointmentsSnapshot = await db.collection('appointments')
+                    .orderBy('date', 'desc')
+                    .limit(5)
+                    .get();
+
+                if (appointmentsSnapshot.empty) {
+                    activityList.innerHTML = '<p>No recent activities found.</p>';
+                    return;
+                }
+
+                appointmentsSnapshot.forEach(doc => {
+                    const appointment = doc.data();
+                    const activityItem = document.createElement('div');
+                    activityItem.className = 'activity-item';
+                    activityItem.innerHTML = `
+                        <div class="activity-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="activity-details">
+                            <h4>New Appointment</h4>
+                            <p>${appointment.patientName} - ${appointment.service}</p>
+                            <span class="activity-time">${formatDate(appointment.date?.toDate())}</span>
+                        </div>
+                    `;
+                    activityList.appendChild(activityItem);
+                });
+            } catch (error) {
+                console.error("Error loading activities:", error);
+                activityList.innerHTML = '<p>Error loading activities. Please try again later.</p>';
+            }
+        }
+
+        // Helper function to format date
+        function formatDate(date) {
+            if (!date) return 'N/A';
+            return new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
+        }
+
+        // Load dashboard data when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardStats();
+            
+            // Set the username if available
+            const username = localStorage.getItem('loggedInUsername');
+            if (username) {
+                const userElement = document.querySelector('.user-profile span');
+                if (userElement) {
+                    userElement.textContent = username;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

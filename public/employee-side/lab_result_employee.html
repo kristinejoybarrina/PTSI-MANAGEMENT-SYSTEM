@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Results - Employee</title>
+    <link rel="stylesheet" href="../assets/css/lab_result_admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://philtbsociety.org/wp-content/uploads/2022/07/cropped-1-PTSI-New-Logo-Original-1-600x786.png" alt="PTSI Logo" class="logo">
+            <h2>PTSI</h2>
+            <div class="sidebar-toggle" id="toggleSidebar">
+                <img src="../assets/img/arrow-left.png" alt="Hide Sidebar">
+            </div>
+        </div>
+        <ul class="menu">
+            <h3>Menu</h3>
+            <li id="dashboard"><i class="icon"><img src="../assets/img/dash-icon.png"></i><h3>Dashboard</h3></li>
+            <li id="lab-result" class="active"><i class="icon"><img src="../assets/img/lab-result-icon.png"></i><h3>Lab Result</h3></li>
+            <li id="appointment"><i class="icon"><img src="../assets/img/appointment-icon.png"></i><h3>Appointment</h3></li>
+        </ul>
+        <div class="logout" id="logout">
+            <img src="../assets/img/logout-icon.png" alt="Logout Icon">
+            <h3>Logout</h3>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="header-left">
+                <div class="hamburger" id="hamburger">
+                    <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
+                </div>
+                <div class="page-title"><strong>Lab Results</strong></div>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" id="searchLabResults" placeholder="Search lab results...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-actions">
+                    <button id="addLabResultBtn" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add Lab Result
+                    </button>
+                    <div class="user-profile">
+                        <img src="../assets/img/default-avatar.png" alt="User">
+                        <span id="employeeName">Employee</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="labresult-container">
+            <div class="labresult-filters">
+                <div class="filter-group">
+                    <label for="statusFilter">Status:</label>
+                    <select id="statusFilter">
+                        <option value="all">All Results</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="abnormal">Abnormal</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="dateFilter">Date Range:</label>
+                    <input type="date" id="startDate">
+                    <span>to</span>
+                    <input type="date" id="endDate">
+                </div>
+                <button id="applyFilters" class="btn-secondary">Apply Filters</button>
+                <button id="resetFilters" class="btn-text">Reset</button>
+                <button id="exportBtn" class="btn-secondary">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+            </div>
+
+            <div class="labresult-list">
+                <div class="labresult-list-header">
+                    <div class="labresult-id">Lab ID</div>
+                    <div class="labresult-patient">Patient</div>
+                    <div class="labresult-test">Test Type</div>
+                    <div class="labresult-date">Test Date</div>
+                    <div class="labresult-status">Status</div>
+                    <div class="labresult-actions">Actions</div>
+                </div>
+                <div class="labresult-list-body" id="labResultList">
+                    <!-- Lab results will be loaded here by JavaScript -->
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i> Loading lab results...
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <button id="prevPage" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+                <div class="page-info">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></div>
+                <button id="nextPage" disabled>Next <i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Lab Result Modal -->
+    <div class="modal" id="labResultModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Lab Result</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="labResultForm">
+                    <input type="hidden" id="labResultId">
+                    
+                    <div class="form-section">
+                        <h4>Patient Information</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="patientSelect">Patient</label>
+                                <select id="patientSelect" required>
+                                    <option value="">Select Patient</option>
+                                    <!-- Will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="patientDob">Date of Birth</label>
+                                <input type="date" id="patientDob" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="patientGender">Gender</label>
+                                <input type="text" id="patientGender" disabled>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Test Information</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="testType">Test Type</label>
+                                <select id="testType" required>
+                                    <option value="">Select Test Type</option>
+                                    <option value="cbc">Complete Blood Count (CBC)</option>
+                                    <option value="urinalysis">Urinalysis</option>
+                                    <option value="xray">Chest X-ray</option>
+                                    <option value="sputum">Sputum Test</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="testDate">Test Date</label>
+                                <input type="date" id="testDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select id="status" required>
+                                    <option value="pending">Pending</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="abnormal">Abnormal</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Test Results</h4>
+                        <div id="testResultsContainer">
+                            <!-- Dynamic test result fields will be added here based on test type -->
+                            <div class="no-test-selected">
+                                <p>Select a test type to see specific test fields</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-group full-width">
+                            <label for="notes">Notes</label>
+                            <textarea id="notes" rows="3" placeholder="Additional notes or comments"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="cancelLabResult">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Lab Result</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Lab Result Modal -->
+    <div class="modal" id="viewLabResultModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Lab Result Details</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body" id="labResultDetails">
+                <!-- Lab result details will be loaded here by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="printResult">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button class="btn-primary" id="closeViewModal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content confirm-modal">
+            <div class="modal-body">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3 id="confirmMessage">Are you sure you want to delete this lab result?</h3>
+                <div class="confirm-actions">
+                    <button class="btn-secondary" id="cancelConfirm">Cancel</button>
+                    <button class="btn-danger" id="confirmAction">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="js/lab_results.js"></script>
+</body>
+</html>
