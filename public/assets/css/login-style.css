@@ -64,6 +64,42 @@ h1.login-text {
   font-size: 32px;
   color: #000000;
   margin: 0;
+  margin-bottom: 16px;
+}
+
+/* Login Type Toggle */
+.login-type-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 4px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.login-type-btn {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-family: 'Source Serif Pro', serif;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.login-type-btn.active {
+  background-color: #000099;
+  color: white;
+  font-weight: 600;
+}
+
+.login-type-btn:not(.active):hover {
+  background-color: #e0e0e0;
 }
 
 input[type="text"],

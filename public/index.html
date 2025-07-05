@@ -14,7 +14,7 @@
         <div class="login-container" id="loginContainer">
             <div class="login-header">
                 <img src="assets/img/PTSILogo.png" alt="Philippine Tuberculosis Society Inc. Logo" id="PTSI-logo">
-                <h1 class="login-text">Patient's Login</h1>
+                <h1 class="login-text">Login</h1>
             </div>
             <form id="loginForm">
                 <div class="input-group">
@@ -95,26 +95,65 @@
       const password = document.getElementById("password").value;      
 
       try {
-        const q = query(collection(db, "registrationForm"), where("username", "==", username));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-          alert("❌ Invalid username or password");
-          return;
-        }
+        // First try to find the user in the employees collection (admin/employee)
+        const employeeQuery = query(collection(db, "employees"), where("username", "==", username));
+        const employeeSnapshot = await getDocs(employeeQuery);
+        
+        // Then try the registrationForm collection (patients)
+        const patientQuery = query(collection(db, "registrationForm"), where("username", "==", username));
+        const patientSnapshot = await getDocs(patientQuery);
 
         let authenticated = false;
-        querySnapshot.forEach((doc) => {
-          const user = doc.data();
-          if (user.password === password) {
-            authenticated = true;
+        let userRole = '';
+        let userData = null;
+
+        // Check employee credentials first
+        if (!employeeSnapshot.empty) {
+          employeeSnapshot.forEach((doc) => {
+            const user = doc.data();
+            if (user.password === password) {
+              authenticated = true;
+              userRole = user.role || 'employee'; // Default to 'employee' if role not specified
+              userData = user;
+            }
+          });
+        }
+        
+        // If not an employee, check patient credentials
+        if (!authenticated && !patientSnapshot.empty) {
+          patientSnapshot.forEach((doc) => {
+            const user = doc.data();
+            if (user.password === password) {
+              authenticated = true;
+              userRole = 'patient';
+              userData = user;
+            }
+          });
+        }
+
+        if (authenticated) {
+          // Save user data to localStorage
+          localStorage.setItem("loggedInUsername", username);
+          localStorage.setItem("userRole", userRole);
           
-            // ✅ Save username to localStorage
-            localStorage.setItem("loggedInUsername", username);
+          // Debug info
+          console.log('Current location:', window.location.href);
+          console.log('User role:', userRole);
           
-            window.location.href = "client/dashboard.html";
+          // Redirect based on role using relative paths
+          let redirectUrl;
+          if (userRole === 'admin') {
+            redirectUrl = 'admin-side/dashboard_admin.html';
+          } else if (userRole === 'employee') {
+            redirectUrl = 'employee/dashboard_employee.html';
+          } else {
+            redirectUrl = 'client/dashboard.html';
           }
-        });
+          
+          console.log('Attempting to redirect to:', redirectUrl);
+          window.location.href = redirectUrl;
+          return;
+        }
 
         if (!authenticated) {
           alert("❌ Invalid username or password");
