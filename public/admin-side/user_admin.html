@@ -220,26 +220,47 @@
           return;
         }
       
-        // Sort users by LASTNAME alphabetically
+        // Sort users by LASTNAME alphabetically - handle blank/undefined values
         users.sort((a, b) => {
-          const lnameA = (a.lastname || "").toUpperCase();
-          const lnameB = (b.lastname || "").toUpperCase();
+          const lnameA = (a.lastname || '').trim().toUpperCase();
+          const lnameB = (b.lastname || '').trim().toUpperCase();
+          // Handle empty strings by putting them at the end
+          if (!lnameA && !lnameB) return 0;
+          if (!lnameA) return 1;
+          if (!lnameB) return -1;
           return lnameA.localeCompare(lnameB);
         });
       
-        // Sort users by last name
+        // Sort filtered users by last name - handle blank/undefined values
         filteredUsers.sort((a, b) => {
-          const lnameA = (a.lastName || a.lastname || '').toUpperCase();
-          const lnameB = (b.lastName || b.lastname || '').toUpperCase();
+          const lnameA = (a.lastName || a.lastname || '').trim().toUpperCase();
+          const lnameB = (b.lastName || b.lastname || '').trim().toUpperCase();
+          // Handle empty strings by putting them at the end
+          if (!lnameA && !lnameB) return 0;
+          if (!lnameA) return 1;
+          if (!lnameB) return -1;
           return lnameA.localeCompare(lnameB);
         });
         
         filteredUsers.forEach(user => {
-          const fullName = `${(user.lastName || user.lastname || '').toUpperCase()}, ${(user.firstName || user.firstname || '').toUpperCase()}`;
+          // Handle blank/undefined values for first and last names
+          const firstName = (user.firstName || user.firstname || '').trim();
+          const lastName = (user.lastName || user.lastname || '').trim();
+          
+          // Create full name, only include comma if both names exist
+          let fullName = '';
+          if (lastName && firstName) {
+            fullName = `${lastName.toUpperCase()}, ${firstName.toUpperCase()}`;
+          } else if (lastName) {
+            fullName = lastName.toUpperCase();
+          } else if (firstName) {
+            fullName = firstName.toUpperCase();
+          }
+          
           const userType = user.role || 'patient';
           const row = `
             <tr>
-              <td>${user.id}</td>
+              <td>${user.id || ''}</td>
               <td>${fullName}</td>
               <td>${user.email || ''}</td>
               <td><span class="user-type-badge ${userType}">${userType.charAt(0).toUpperCase() + userType.slice(1)}</span></td>

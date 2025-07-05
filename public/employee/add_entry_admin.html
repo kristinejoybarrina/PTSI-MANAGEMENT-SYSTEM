@@ -6,6 +6,99 @@
     <title>Lab Result</title>
     <link rel="stylesheet" href="../assets/css/add_entry_admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+      .input-with-button {
+        margin-bottom: 1rem;
+      }
+      .input-group {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 38px; /* Fixed height for consistency */
+      }
+      .input-group-text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #495057;
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-right: none;
+        border-radius: 4px 0 0 4px;
+        min-width: 45px;
+      }
+      .form-control {
+        flex: 1;
+        min-width: 0;
+        padding: 6px 12px;
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        color: #333;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-left: none;
+        border-right: none;
+        margin: 0;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        height: 100%;
+        box-sizing: border-box;
+      }
+      .form-control:focus {
+        color: #333;
+        background-color: #fff;
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+      .generate-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-left: none;
+        border-radius: 0 4px 4px 0;
+        padding: 0 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #495057;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        height: 100%;
+        white-space: nowrap;
+      }
+      .generate-btn:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+        color: #212529;
+      }
+      .generate-btn:active {
+        background-color: #dee2e6;
+      }
+      .generate-btn i {
+        font-size: 0.8rem;
+        margin-top: -1px;
+      }
+      .id-updated {
+        animation: highlight 1s ease-in-out;
+      }
+      @keyframes highlight {
+        0% { background-color: #fff3cd; }
+        100% { background-color: #ffffff; }
+      }
+      .form-text {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #6c757d;
+      }
+    </style>
 </head>
 <body>
     <div class="sidebar" id="sidebar">
@@ -37,12 +130,6 @@
               </div>
               <div class="labresult-title"><strong>Input Lab Result</strong></div>
             </div>
-            <div class="header-icons">
-                <span id="notificationBell" class="notification-bell">
-                    <img src="../assets/img/notif-icon.png" alt="Notification Icon">
-                </span>
-                <span><img src="../assets/img/profile-icon.png" alt="Profile Icon"></span>
-            </div>
         </div>
 
         <div id="notificationDropdown" class="notification-dropdown">
@@ -73,8 +160,19 @@
         <label>Last Name</label>
         <input type="text" id="lastName" placeholder="Enter last name">   
 
-        <label>Laboratory ID</label>
-        <input type="text" id="labId" placeholder="Enter ID">
+        <div class="form-group">
+          <label>Laboratory ID</label>
+          <div class="input-with-button">
+            <div class="input-group">
+              <span class="input-group-text">ID</span>
+              <input type="text" id="labId" class="form-control" placeholder="Enter ID or leave blank to auto-generate">
+              <button type="button" id="generateIdBtn" class="btn btn-outline-secondary generate-btn" title="Generate new unique ID">
+                <i class="fas fa-sync-alt"></i> Generate
+              </button>
+            </div>
+            <small class="form-text text-muted">Leave blank to auto-generate a unique ID</small>
+          </div>
+        </div>
 
         <label>Date</label>
         <input type="date">
@@ -100,6 +198,7 @@
         collection,
         doc,
         setDoc,
+        getDoc,
         addDoc,
         getDocs,
         serverTimestamp
@@ -137,13 +236,46 @@
         return (maxId + 1).toString();
       }
       
-      // On page load, set Lab ID and result code
+      // Function to update ID with animation
+      async function updateIdWithAnimation(element, newId) {
+        element.style.opacity = '0';
+        setTimeout(() => {
+          element.value = newId;
+          element.style.opacity = '1';
+          // Add animation class
+          element.classList.add('id-updated');
+          setTimeout(() => {
+            element.classList.remove('id-updated');
+          }, 1000);
+        }, 200);
+      }
+
+      // On page load, set default values
       window.addEventListener("DOMContentLoaded", async () => {
         const labIdInput = document.getElementById("labId");
         const resultCodeInput = document.getElementById("resultCode");
-        if (labIdInput) {
-          labIdInput.value = await getNextLabId();
+        const generateBtn = document.getElementById("generateIdBtn");
+        
+        // Generate ID button handler
+        if (generateBtn && labIdInput) {
+          // Initial ID generation
+          const initialId = await getNextLabId();
+          labIdInput.value = initialId;
+          
+          // Click handler for generate button
+          generateBtn.addEventListener("click", async () => {
+            const nextId = await getNextLabId();
+            updateIdWithAnimation(labIdInput, nextId);
+          });
+          
+          // Add input validation
+          labIdInput.addEventListener('input', (e) => {
+            // Allow only alphanumeric characters and limit length
+            e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+          });
         }
+        
+        // Generate initial result code
         if (resultCodeInput) {
           resultCodeInput.value = generateResultCode();
         }
@@ -159,6 +291,18 @@
         });
       }
       
+      // Function to check if a Lab ID already exists
+      async function checkLabIdExists(labId) {
+        try {
+          const docRef = doc(db, "patientLab", labId);
+          const docSnap = await getDoc(docRef);
+          return docSnap.exists();
+        } catch (error) {
+          console.error("Error checking Lab ID:", error);
+          return false;
+        }
+      }
+
       document.querySelector(".save-btn").addEventListener("click", async () => {
         const lastName = document.getElementById("lastName").value.trim().toUpperCase();
         const firstName = document.getElementById("firstName").value.trim().toUpperCase();
@@ -173,17 +317,32 @@
           alert("❗ Please complete all required fields and upload a file.");
           return;
         }
+
+        // If no Lab ID provided, generate one
+        let finalLabId = labId;
+        if (!finalLabId) {
+          finalLabId = await getNextLabId();
+          document.getElementById("labId").value = finalLabId;
+        } else {
+          // Check if provided Lab ID already exists
+          const idExists = await checkLabIdExists(finalLabId);
+          if (idExists) {
+            alert("❌ Error: This Lab ID already exists. Please use a different ID or edit the existing record.");
+            return;
+          }
+        }
       
         try {
           const base64PDF = await toBase64(file);
       
-          const patientRef = doc(db, "patientLab", labId);
+          const patientRef = doc(db, "patientLab", finalLabId);
           await setDoc(patientRef, {
-            laboratoryId: labId,
+            laboratoryId: finalLabId,
             lastName,
             firstName,
-            middleName
-          }, { merge: true });
+            middleName,
+            createdAt: serverTimestamp()
+          }, { merge: false }); // Changed to merge: false to prevent accidental updates to existing records
       
           const labResultsRef = collection(patientRef, "labResults");
           await addDoc(labResultsRef, {
@@ -194,8 +353,8 @@
             timestamp: serverTimestamp()
           });
       
-          alert("✅ Lab result saved under patientLab → labResults.");
-          window.location.href = "lab_result_admin.html"; // ✅ Redirect here
+          alert("✅ Lab result saved successfully!");
+          window.location.href = "lab_result_admin.html";
       
         } catch (err) {
           console.error("Error saving result:", err);

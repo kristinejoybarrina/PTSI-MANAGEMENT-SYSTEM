@@ -116,7 +116,7 @@
   
         if (!snapshot.empty) {
           const userData = snapshot.docs[0].data();
-          usernameElement.textContent = userData.firstname || savedUsername;
+          usernameElement.textContent = (userData.firstname && userData.firstname.trim()) || savedUsername || '';
   
           if (userData.imageBase64?.startsWith("data:image")) {
             profileImage.src = userData.imageBase64;
