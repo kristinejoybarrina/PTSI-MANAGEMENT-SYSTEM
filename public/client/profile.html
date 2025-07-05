@@ -116,6 +116,18 @@
         doc,
         updateDoc
       } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+      
+      // Logout functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const logoutBtn = document.getElementById('logout');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('loggedInUsername');
+            window.location.href = '../index.html';
+          });
+        }
+      });
     
       const firebaseConfig = {
         apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
