@@ -6,6 +6,7 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="../assets/css/dashboard_admin.css">
     <link rel="stylesheet" href="../assets/css/calendar.css">
+    <link rel="stylesheet" href="../assets/css/appointment_modal.css">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -80,14 +81,27 @@
         </div>
     </div>
 
-    <div class="activity">
-        <div class="activity-icon"></div>
-            <h2>Recent Activities</h2>
+    <div class="recent-activities">
+        <h2><img src="../assets/img/activity-icon.png" alt="Activities" style="width: 24px; margin-right: 10px;">Recent Activities</h2>
+        <div class="activity-list" id="recentActivities">
+            <!-- Activities will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="appointment-modal">
+        <div class="appointment-modal-content">
+            <button class="close-modal" id="closeAppointmentModal">&times;</button>
+            <h3>Appointments for <span id="modalDate"></span></h3>
+            <div class="appointment-list" id="appointmentList">
+                <!-- Appointments will be populated by JavaScript -->
+            </div>
         </div>
     </div>
   </div>
   <script src="../assets/js/menu.js"></script>
   <script src="../assets/js/calendar.js"></script>
+  <script src="../assets/js/appointment_modal.js"></script>
   <script>
     // Initialize admin calendar with some sample events
     document.addEventListener('DOMContentLoaded', () => {
