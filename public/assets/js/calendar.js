@@ -269,7 +269,45 @@ document.addEventListener('DOMContentLoaded', () => {
             recentDays: 0,
             onDateClick: (date) => {
                 console.log('Admin date clicked:', date);
-                // Handle admin date click
+                // Format date for display
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const formattedDate = date.toLocaleDateString('en-US', options);
+                
+                // Set the date in the modal
+                document.getElementById('modalDate').textContent = formattedDate;
+                
+                // TODO: Fetch appointments for this date from the server
+                // For now, we'll use sample data
+                const sampleAppointments = [
+                    { id: 1, time: '09:00 AM', patient: 'John Doe', type: 'Consultation' },
+                    { id: 2, time: '10:30 AM', patient: 'Jane Smith', type: 'Follow-up' },
+                    { id: 3, time: '02:15 PM', patient: 'Robert Johnson', type: 'Therapy' }
+                ];
+                
+                // Populate the appointment list
+                const appointmentList = document.getElementById('appointmentList');
+                appointmentList.innerHTML = '';
+                
+                if (sampleAppointments.length === 0) {
+                    appointmentList.innerHTML = '<p>No appointments scheduled for this date.</p>';
+                } else {
+                    sampleAppointments.forEach(appt => {
+                        const apptElement = document.createElement('div');
+                        apptElement.className = 'appointment-item';
+                        apptElement.innerHTML = `
+                            <div class="appointment-time">${appt.time}</div>
+                            <div class="appointment-details">
+                                <div class="appointment-patient">${appt.patient}</div>
+                                <div class="appointment-type">${appt.type}</div>
+                            </div>
+                            <button class="view-appointment-btn" data-id="${appt.id}">View</button>
+                        `;
+                        appointmentList.appendChild(apptElement);
+                    });
+                }
+                
+                // Show the modal
+                document.getElementById('appointmentModal').style.display = 'block';
             }
         });
     }

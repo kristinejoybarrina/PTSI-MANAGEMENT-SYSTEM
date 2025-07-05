@@ -3,51 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment Admin</title>
-    <link rel="stylesheet" href="../assets/css/appointment-style.css">
+    <title>Appointment Management | PTSI</title>
+    <link rel="stylesheet" href="../assets/css/appointment-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body>
+<body style="background-color: #f0f0f0 !important; font-family: 'Source Serif Pro', serif !important;">
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <img src="https://philtbsociety.org/wp-content/uploads/2022/07/cropped-1-PTSI-New-Logo-Original-1-600x786.png" alt="PTSI Logo" class="logo">
             <h2>PTSI</h2>
             <div class="sidebar-toggle" id="toggleSidebar">
-                <img src="../assets/img/arrow-left.png" alt="Hide Sidebar">
+                <i class="fas fa-chevron-left"></i>
             </div>
         </div>
         <ul class="menu">
-        <h3>Menu</h3>
-        <li id="dashboard"><i class="icon"><img src="../assets/img/dash-icon.png"></i><h3>Dashboard</h3></li>
-        <li id="user-account"><i class="icon"><img src="../assets/img/account-icon.png"></i><h3>User Account</h3></li>
-        <li id="lab-result"><i class="icon"><img src="../assets/img/lab-result-icon.png"></i><h3>Lab Result</h3></li>
-        <li id="appointment"><i class="icon"><img src="../assets/img/appointment-icon.png"></i><h3>Appointment</h3></li>
+            <h3>Menu</h3>
+            <li id="dashboard">
+                <a href="dashboard_admin.html">
+                    <i class="icon"><i class="fas fa-tachometer-alt"></i></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li id="user-account">
+                <a href="user_admin.html">
+                    <i class="icon"><i class="fas fa-users"></i></i>
+                    <span>User Account</span>
+                </a>
+            </li>
+            <li id="lab-result">
+                <a href="labresult_admin.html">
+                    <i class="icon"><i class="fas fa-flask"></i></i>
+                    <span>Lab Result</span>
+                </a>
+            </li>
+            <li id="appointment" class="active">
+                <a href="appointment_admin.html">
+                    <i class="icon"><i class="far fa-calendar-alt"></i></i>
+                    <span>Appointment</span>
+                </a>
+            </li>
         </ul>
         <div class="logout" id="logout">
-            <img src="../assets/img/logout-icon.png" alt="Logout Icon">
-            <h3>Logout</h3>
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="main-content">
         <div class="header">
             <div class="header-left">
-              <div class="hamburger" id="hamburger">
-                <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
-              </div>
-              <div class="labresult-title"><strong>Appointment</strong></div>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="labresult-title">
+                    <strong>Appointment Management</strong>
+                </div>
             </div>
-            <div class="header-icons">
-                <span id="notificationBell" class="notification-bell">
-                    <img src="../assets/img/notif-icon.png" alt="Notification Icon">
-                </span>
-                <span><img src="../assets/img/profile-icon.png" alt="Profile Icon"></span>
+            <div class="header-right">
+                <div class="header-icons">
+                    <div id="notificationBell" class="notification-bell">
+                        <i class="far fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="profile-dropdown">
+                        <div class="profile-icon-container">
+                            <i class="fas fa-user-circle profile-icon"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="#" id="viewProfile"><i class="fas fa-user"></i> View Profile</a>
+                            <a href="#" id="settings"><i class="fas fa-cog"></i> Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" id="logoutTop"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <h1><br>Appointment Admin Placeholder</h1>
-        <p>This is a placeholder page for Appointment Admin. Content coming soon.</p>
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <h3 class="stat-card-title">Total Appointments</h3>
+                    <div class="stat-card-icon" style="background-color: #4f46e5;">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+                <div class="stat-card-value" id="totalAppointments">24</div>
+                <div class="stat-card-change change-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>12% from last month</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <h3 class="stat-card-title">Pending</h3>
+                    <div class="stat-card-icon" style="background-color: #f59e0b;">
+                        <i class="far fa-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-card-value" id="pendingAppointments">8</div>
+                <div class="stat-card-change change-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>3 new today</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <h3 class="stat-card-title">Confirmed</h3>
+                    <div class="stat-card-icon" style="background-color: #10b981;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-card-value" id="confirmedAppointments">14</div>
+                <div class="stat-card-change change-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>5 this week</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <h3 class="stat-card-title">Cancelled</h3>
+                    <div class="stat-card-icon" style="background-color: #ef4444;">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-card-value" id="cancelledAppointments">2</div>
+                <div class="stat-card-change change-down">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>1% of total</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Mode Tabs -->
+        <div class="view-mode-tabs">
+            <button class="view-mode-tab active" data-view="calendar">
+                <i class="far fa-calendar-alt"></i> Calendar View
+            </button>
+            <button class="view-mode-tab" data-view="table">
+                <i class="fas fa-list"></i> List View
+            </button>
+            <div class="view-mode-actions">
+                <button id="newAppointmentBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> New Appointment
+                </button>
+            </div>
+        </div>
+
+        <!-- Calendar View -->
+        <div id="calendarView" class="calendar-view">
+            <div class="calendar-header">
+                <div class="calendar-nav">
+                    <button id="prevMonth" class="calendar-nav-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h2 id="calendarMonth" class="calendar-month">July 2025</h2>
+                    <button id="nextMonth" class="calendar-nav-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <button class="btn btn-outline">
+                    <i class="fas fa-calendar-day"></i> Today
+                </button>
+            </div>
+            <div class="calendar-grid">
+                <div class="calendar-weekday">Sun</div>
+                <div class="calendar-weekday">Mon</div>
+                <div class="calendar-weekday">Tue</div>
+                <div class="calendar-weekday">Wed</div>
+                <div class="calendar-weekday">Thu</div>
+                <div class="calendar-weekday">Fri</div>
+                <div class="calendar-weekday">Sat</div>
+                <!-- Calendar days will be inserted here by JavaScript -->
+                <div id="calendarDays" class="calendar-days"></div>
+            </div>
+        </div>
+
+        <!-- Table View -->
+        <div id="tableView" class="table-view" style="display: none;">
+            <div class="appointment-filters">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchAppointments" placeholder="Search appointments..." class="form-control">
+                </div>
+                <div class="filter-group">
+                    <label for="filterStatus">Status:</label>
+                    <select id="filterStatus" class="filter-select">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterDate">Date:</label>
+                    <input type="date" id="filterDate" class="filter-select">
+                </div>
+                <button id="clearFilters" class="btn btn-outline" onclick="clearFilters()">
+                    <i class="fas fa-times"></i> Clear Filters
+                </button>
+            </div>
+            
+            <div id="appointmentList" class="appointment-table-container">
+                <!-- Appointment list will be inserted here by JavaScript -->
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="far fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="empty-state-title">No Appointments Found</h3>
+                    <p class="empty-state-description">
+                        There are no appointments matching your current filters.
+                    </p>
+                    <button class="btn btn-primary" onclick="clearFilters()">
+                        Clear Filters
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <div class="modal-header">
+                <h2 id="modalTitle">New Appointment</h2>
+            </div>
+            <div class="modal-body">
+                <form id="appointmentForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="patientName">Patient Name *</label>
+                            <input type="text" id="patientName" name="patientName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientId">Patient ID *</label>
+                            <input type="text" id="patientId" name="patientId" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentDate">Date *</label>
+                            <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentTime">Time *</label>
+                            <input type="time" id="appointmentTime" name="appointmentTime" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentType">Appointment Type *</label>
+                            <select id="appointmentType" name="appointmentType" class="form-control" required>
+                                <option value="">Select type</option>
+                                <option value="Check-up">Check-up</option>
+                                <option value="Consultation">Consultation</option>
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Dental">Dental</option>
+                                <option value="Lab Test">Lab Test</option>
+                                <option value="Vaccination">Vaccination</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="doctor">Doctor *</label>
+                            <select id="doctor" name="doctor" class="form-control" required>
+                                <option value="">Select doctor</option>
+                                <option value="Dr. Maria Santos">Dr. Maria Santos</option>
+                                <option value="Dr. Jose Reyes">Dr. Jose Reyes</option>
+                                <option value="Dr. Ana Lim">Dr. Ana Lim</option>
+                                <option value="Dr. Carlos Garcia">Dr. Carlos Garcia</option>
+                                <option value="Dr. Sofia Cruz">Dr. Sofia Cruz</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select id="status" name="status" class="form-control">
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="notes">Notes</label>
+                            <textarea id="notes" name="notes" rows="3" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="document.querySelector('.close-modal').click()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-text">Save Appointment</span>
+                            <span class="btn-loading"><i class="fas fa-spinner fa-spin"></i></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="../assets/js/menu.js"></script>
+    <script src="../assets/js/appointment_admin.js"></script>
+    <script>
+        // Logout functionality with reliable path resolution
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the base URL
+            const getBaseUrl = () => {
+                const scripts = document.getElementsByTagName('script');
+                const currentScript = scripts[scripts.length - 1];
+                const scriptPath = currentScript.src;
+                const scriptDir = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
+                return scriptDir.substring(0, scriptDir.lastIndexOf('/')); // Go up one level from 'js' to 'assets'
+            };
+
+            // Logout function
+            const handleLogout = (e) => {
+                if (e) e.preventDefault();
+                // Clear stored data
+                localStorage.removeItem('activeMenuId');
+                localStorage.removeItem('user');
+                // Redirect to index.html
+                window.location.href = getBaseUrl() + '/index.html';
+                // Fallback to root if the above doesn't work
+                setTimeout(() => {
+                    if (window.location.pathname.endsWith('appointment_admin.html')) {
+                        window.location.href = '../../index.html';
+                    }
+                }, 100);
+            };
+
+            // Attach to all logout buttons
+            const logoutBtns = document.querySelectorAll('.logout, .logout-btn, #logout, #logoutTop');
+            logoutBtns.forEach(btn => {
+                btn.addEventListener('click', handleLogout);
+                // For anchor tags, ensure they don't navigate
+                if (btn.tagName === 'A') {
+                    btn.href = 'javascript:;';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
