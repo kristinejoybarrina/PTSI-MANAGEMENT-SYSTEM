@@ -210,12 +210,12 @@
             updateDoc(patientRef, patientUpdateData)
           ]);
       
-          alert("✅ Lab result and patient info updated!");
+          alert("Lab result and patient info updated!");
           window.location.href = "lab_result_admin.html";
       
         } catch (err) {
           console.error("Error updating lab result or patient info:", err);
-          alert("❌ Update failed.");
+          alert("Update failed.");
         }
       });
       

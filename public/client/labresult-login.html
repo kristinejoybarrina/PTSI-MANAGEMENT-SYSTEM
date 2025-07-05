@@ -128,7 +128,7 @@
               timestamp: serverTimestamp()
             });
           } catch (err) {
-            console.error("❌ Failed to log activity:", err);
+            console.error("Failed to log activity:", err);
           }
         }
       
@@ -141,18 +141,18 @@
       
           const code = document.getElementById("labresult-code").value.trim();
           if (!/^\d{6}$/.test(code)) {
-            alert("❌ Please enter a valid 6-digit code.");
+            alert("Please enter a valid 6-digit code.");
             return;
           }
           sessionStorage.setItem("labResultCode", code);
           window.location.href = "labresult.html";
         });
       
-        // ✅ Logout functionality
+        // Logout functionality
         const logoutBtn = document.getElementById("logout");
         logoutBtn?.addEventListener("click", () => {
           localStorage.removeItem("loggedInUsername");
-          alert("👋 You have been logged out.");
+          alert("You have been logged out.");
           window.location.href = "../index.html";
         });
       </script>

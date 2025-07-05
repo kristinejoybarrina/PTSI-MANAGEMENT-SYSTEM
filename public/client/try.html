@@ -60,10 +60,10 @@
 
       try {
         await addDoc(collection(db, "recentActivities"), newActivity);
-        alert("✅ Activity saved!");
+        alert("Activity saved!");
         loadActivities(); // Reload after adding
       } catch (err) {
-        console.error("❌ Failed to save activity:", err);
+        console.error("Failed to save activity:", err);
         alert("Error saving activity.");
       }
     });
@@ -103,7 +103,7 @@
           });
         }
       } catch (err) {
-        console.error("❌ Error loading activities:", err);
+        console.error("Error loading activities:", err);
         activityList.innerHTML = "<p style='color:red;'>Failed to load activities.</p>";
       }
     }
