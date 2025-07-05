@@ -29,33 +29,15 @@
             <img src="../assets/img/logout-icon.png" alt="Logout Icon">
             <h3>Logout</h3>
         </div>
-        
     </div>
-
     <div class="main-content">
         <div class="header">
-            <div class="header-left">
-              <div class="hamburger" id="hamburger">
-                <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
-              </div>
-              <div class="labresult-title"><strong>Dashboard</strong></div>
+          <div class="header-left">
+            <div class="hamburger" id="hamburger">
+              <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
             </div>
-            <div class="header-icons">
-                <span id="notificationBell" class="notification-bell">
-                    <img src="../assets/img/notif-icon.png" alt="Notification Icon">
-                </span>
-                <span><img src="../assets/img/profile-icon.png" alt="Profile Icon"></span>
-            </div>
-        </div>
-
-        <div id="notificationDropdown" class="notification-dropdown">
-            <div class="notification-header">
-                <h3>Notifications</h3>
-            </div>
-            <div id="notificationItems" class="notification-items"></div>
-            <div class="all-notifications-link-container">
-                <a href="#" class="all-notifications-link">See all</a>
-            </div>
+            <div class="dashboard-title"><strong>Dashboard</strong></div>
+          </div>
         </div>
     
     <h1><br>Welcome, Admin!</h1>
@@ -81,13 +63,6 @@
         </div>
     </div>
 
-    <div class="recent-activities">
-        <h2><img src="../assets/img/activity-icon.png" alt="Activities" style="width: 24px; margin-right: 10px;">Recent Activities</h2>
-        <div class="activity-list" id="recentActivities">
-            <!-- Activities will be populated by JavaScript -->
-        </div>
-    </div>
-
     <!-- Appointment Modal -->
     <div id="appointmentModal" class="appointment-modal">
         <div class="appointment-modal-content">
@@ -98,15 +73,292 @@
             </div>
         </div>
     </div>
+
+    <style>
+        /* Profile dropdown styles */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+            margin-left: 15px;
+            cursor: pointer;
+        }
+
+        .profile-icon-container {
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .profile-icon-container:hover {
+            background-color: #f0f0f0;
+        }
+
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e9ecef;
+            margin: 4px 0;
+        }
+
+        .profile-dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <script>
+        // Navigation functions
+        function navigateTo(section) {
+            console.log(`Navigating to: ${section}`);
+            window.location.href = `${section}.html`;
+        }
+        
+        // Logout function
+        function handleLogout() {
+            // Clear authentication data
+            localStorage.removeItem('loggedInUsername');
+            localStorage.removeItem('userRole');
+            
+            // Redirect to login page
+            window.location.href = '../index.html';
+        }
+
+        // Close modal when clicking the close button
+        document.getElementById('closeAppointmentModal').addEventListener('click', function() {
+            document.getElementById('appointmentModal').style.display = 'none';
+        });
+
+        // Add click handlers for navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Profile dropdown toggle
+            const profileDropdown = document.querySelector('.profile-dropdown');
+            if (profileDropdown) {
+                profileDropdown.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const dropdown = profileDropdown.querySelector('.dropdown-content');
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', () => {
+                    const dropdown = profileDropdown.querySelector('.dropdown-content');
+                    if (dropdown) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+
+                // Profile navigation
+                document.getElementById('viewProfile')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateTo('profile');
+                });
+
+                document.getElementById('settings')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateTo('settings');
+                });
+
+                // Add click handler for top logout button
+                document.getElementById('logoutTop')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    handleLogout();
+                });
+            }
+
+            // Menu item click handlers
+            const menuItems = {
+                'user-account': () => navigateTo('user_admin'),
+                'lab-result': () => navigateTo('lab_result_admin'),
+                'appointment': () => navigateTo('appointment_admin'),
+                'dashboard': () => navigateTo('dashboard_admin')
+            };
+
+            // Add click handlers to menu items
+            Object.keys(menuItems).forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.style.cursor = 'pointer';
+                    element.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        menuItems[id]();
+                    });
+                }
+            });
+        });
+
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('appointmentModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.getElementById('appointmentModal').style.display = 'none';
+            }
+        });
+
+        // Handle view appointment button clicks (delegated event)
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.view-appointment-btn')) {
+                const appointmentId = event.target.closest('.view-appointment-btn').getAttribute('data-id');
+                console.log('Viewing appointment:', appointmentId);
+                // TODO: Implement view appointment details functionality
+                // This could open another modal or navigate to an appointment details page
+            }
+        });
+    </script>
   </div>
   <script src="../assets/js/menu.js"></script>
   <script src="../assets/js/calendar.js"></script>
   <script src="../assets/js/appointment_modal.js"></script>
   <script>
-    // Initialize admin calendar with some sample events
-    document.addEventListener('DOMContentLoaded', () => {
+    // Sample activity data (replace with actual data from your backend)
+    const sampleActivities = [
+        {
+            id: 1,
+            type: 'appointment',
+            message: 'New appointment scheduled with John Doe',
+            time: '2 minutes ago',
+            timestamp: new Date().getTime() - 120000 // 2 minutes ago
+        },
+        {
+            id: 2,
+            type: 'user',
+            message: 'New user registered: Jane Smith',
+            time: '15 minutes ago',
+            timestamp: new Date().getTime() - 900000 // 15 minutes ago
+        },
+        {
+            id: 3,
+            type: 'lab',
+            message: 'Lab results uploaded for Robert Johnson',
+            time: '1 hour ago',
+            timestamp: new Date().getTime() - 3600000 // 1 hour ago
+        },
+        {
+            id: 4,
+            type: 'system',
+            message: 'System maintenance completed',
+            time: '3 hours ago',
+            timestamp: new Date().getTime() - 10800000 // 3 hours ago
+        },
+        {
+            id: 5,
+            type: 'appointment',
+            message: 'Appointment rescheduled: Sarah Williams',
+            time: '5 hours ago',
+            timestamp: new Date().getTime() - 18000000 // 5 hours ago
+        }
+    ];
+
+    // Function to render activities
+    function renderActivities(activities) {
+        const container = document.getElementById('recentActivities');
+        
+        if (!activities || activities.length === 0) {
+            container.innerHTML = `
+                <div class="empty-activities">
+                    <p>No recent activities found</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = activities.map(activity => `
+            <div class="activity-item" data-id="${activity.id}">
+                <div class="activity-icon ${activity.type}">
+                    ${getActivityIcon(activity.type)}
+                </div>
+                <div class="activity-content">
+                    <div class="activity-message">${activity.message}</div>
+                    <div class="activity-meta">
+                        <span class="activity-time">${activity.time}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Function to get icon based on activity type
+    function getActivityIcon(type) {
+        const icons = {
+            'appointment': '📅',
+            'user': '👤',
+            'lab': '🔬',
+            'system': '⚙️'
+        };
+        return icons[type] || '🔔';
+    }
+
+    // Function to fetch activities (simulated with sample data)
+    function fetchActivities() {
+        return new Promise((resolve) => {
+            // Simulate API call delay
+            setTimeout(() => {
+                resolve(sampleActivities);
+            }, 500);
+        });
+    }
+
+    // Initialize admin dashboard
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Add click handler for sidebar logout button
+        document.getElementById('logout')?.addEventListener('click', handleLogout);
+        
+        // Check if user is logged in
+        const loggedInUsername = localStorage.getItem('loggedInUsername');
+        const userRole = localStorage.getItem('userRole');
+        
+        if (!loggedInUsername || userRole !== 'admin') {
+            // Redirect to login if not authenticated or not admin
+            window.location.href = '../index.html';
+            return;
+        }
+        
+        // Initialize calendar
         if (window.adminCalendar) {
-            // Add sample events (you would replace this with actual data from your database)
             const today = new Date();
             const tomorrow = new Date(today);
             tomorrow.setDate(today.getDate() + 1);
@@ -114,10 +366,52 @@
             window.adminCalendar.addEvent(today, 'Team Meeting', 'Monthly team sync');
             window.adminCalendar.addEvent(tomorrow, 'Doctor Appointment', 'Follow-up checkup');
             
-            // Update stats (you would replace this with actual data from your database)
+            // Update stats (replace with actual data from your database)
             document.getElementById('totalUsers').textContent = '125';
             document.getElementById('todaysAppointments').textContent = '8';
             document.getElementById('pendingResults').textContent = '3';
+        }
+
+        // Load activities
+        const refreshBtn = document.getElementById('refreshActivities');
+        const activitiesContainer = document.getElementById('recentActivities');
+        
+        // Add loading state
+        activitiesContainer.innerHTML = `
+            <div class="activity-loading">
+                <div class="loading-spinner"></div>
+                <p>Loading activities...</p>
+            </div>
+        `;
+
+        // Initial load
+        try {
+            const activities = await fetchActivities();
+            renderActivities(activities);
+        } catch (error) {
+            console.error('Error loading activities:', error);
+            activitiesContainer.innerHTML = `
+                <div class="empty-activities">
+                    <p>Failed to load activities. <button onclick="window.location.reload()">Try again</button></p>
+                </div>
+            `;
+        }
+
+        // Refresh button click handler
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', async () => {
+                refreshBtn.classList.add('refreshing');
+                try {
+                    const activities = await fetchActivities();
+                    renderActivities(activities);
+                } catch (error) {
+                    console.error('Error refreshing activities:', error);
+                } finally {
+                    setTimeout(() => {
+                        refreshBtn.classList.remove('refreshing');
+                    }, 1000);
+                }
+            });
         }
     });
   </script>

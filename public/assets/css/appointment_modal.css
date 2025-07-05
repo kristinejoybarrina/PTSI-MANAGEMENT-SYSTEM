@@ -1,0 +1,135 @@
+/* Appointment Modal Styles */
+.appointment-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+}
+
+.appointment-modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-modal {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.appointment-modal h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.appointment-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.appointment-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.appointment-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-time {
+    font-weight: 600;
+    color: #2c3e50;
+    min-width: 80px;
+    font-size: 0.9em;
+}
+
+.appointment-details {
+    flex: 1;
+    margin: 0 15px;
+}
+
+.appointment-patient {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 3px;
+}
+
+.appointment-type {
+    font-size: 0.85em;
+    color: #7f8c8d;
+}
+
+.view-appointment-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background-color 0.2s;
+}
+
+.view-appointment-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+    .appointment-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .appointment-time {
+        margin-bottom: 8px;
+    }
+    
+    .appointment-details {
+        margin: 8px 0;
+        width: 100%;
+    }
+    
+    .view-appointment-btn {
+        align-self: flex-end;
+        width: 100%;
+        text-align: center;
+    }
+}

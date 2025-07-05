@@ -99,7 +99,7 @@ body {
 /* Logout */
 
 .logout {
-  margin-top: 210px;
+  margin-top: 190px;
   display: flex;
   align-items: center;
   color: #ccc;
@@ -128,10 +128,18 @@ body {
 /* Main Content */
 .main-content {
   margin-left: 270px;
-  padding: 80px 50px 50px;
-  min-height: 100vh;
-  box-sizing: border-box;
-  background-color: #f5f7fa;
+  padding: 50px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-title {
+  font-size: 20px;
+  font-weight: bold;
 }
 
 /* Header */
@@ -141,15 +149,13 @@ body {
   left: 257px;
   width: calc(100% - 257px);
   background-color: white;
-  padding: 15px 40px;
+  padding: 20px 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  z-index: 1000;
-  height: 70px;
-  box-sizing: border-box;
+  border-bottom: 1px solid #ddd;
+  font-size: 25px;
+  z-index: 999;
 }
 
 /* Header Icons */
@@ -293,137 +299,6 @@ body {
 h1 {
   font-family: 'Times New Roman', Times, serif;
   font-size: 28px;
-}
-
-/* Notification Part */
-
-.header-icons {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  z-index: 100;
-}
-
-.notification-bell {
-  cursor: pointer;
-  position: relative;
-  display: inline-block;
-  padding: 0.5rem;
-  border-radius: 9999px;
-  transition: background-color 200ms ease-in-out;
-}
-
-.notification-bell:hover {
-  background-color: #e5e7eb;
-}
-
-.notification-bell img {
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
-}
-
-.notification-dropdown {
-display: none;
-position: absolute; 
-top: 30px; 
-right: 5px; 
-margin-top: 30px; 
-width: 20rem;
-background-color: #fff;
-border-radius: 0.5rem;
-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-overflow: hidden;
-z-index: 1000;
-border: 1px solid #e5e7eb;
-font-family: 'Inter', sans-serif;
-}
-
-.notification-dropdown.active {
-  display: block;
-}
-
-.notification-header {
-  padding: 0.75rem 1.25rem;
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.notification-header h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0;
-}
-
-.notification-items {
-  display: flex;
-  flex-direction: column;
-}
-
-.notification-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 20px 50px;
-  padding-left: 20px;
-  padding-right: 40px;
-}
-
-.notification-item svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-right: 0.5rem;
-  margin-top: 0.125rem;
-}
-
-.notification-item .text-green-500 { color: #22c55e; }
-.notification-item .text-blue-500 { color: #3b82f6; }
-.notification-item .text-yellow-500 { color: #facc15; }
-
-.notification-item p {
-  margin: 0;
-}
-
-
-.notification-item:hover {
-background-color: #f0f8ff;
-cursor: pointer;
-}
-
-
-.notification-item .title {
-  color: #111827;
-  font-weight: 500;
-}
-
-.notification-item .time {
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-.all-notifications-link-container {
-  padding: 0.75rem 1.25rem;
-  background-color: #f9fafb;
-  border-top: 1px solid #e5e7eb;
-  text-align: center;
-}
-
-.all-notifications-link {
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 200ms ease-in-out;
-}
-
-.all-notifications-link:hover {
-  color: #1d4ed8;
-}
-
-@media (min-width: 640px) {
-  .notification-dropdown {
-      width: 24rem;
-  }
 }
 
 /*Calendar Design*/
