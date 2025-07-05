@@ -463,42 +463,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-    document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("registrationForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
-    
-        const form = e.target;
-        const lastname = document.getElementById("lastname")?.value || "";
-        const firstname = document.getElementById("firstname")?.value || "";
-        const imageFile = document.getElementById("fileInput")?.files[0];
-    
-        try {
-            const docRef = doc(collection(db, "registrationForm"));
-            const userData = {
-            id: docRef.id,
-            lastname,
-            firstname
-            };
-    
-            if (imageFile) {
-            const imageRef = ref(storage, `profileImages/${docRef.id}_${imageFile.name}`);
-            await uploadBytes(imageRef, imageFile);
-            const downloadURL = await getDownloadURL(imageRef);
-            userData.imageUrl = downloadURL;
-            }
-    
-            await setDoc(docRef, userData);
-    
-            alert("✅ Registration successful!");
-            form.reset(); // safer than this.reset()
-            const profileImage = document.getElementById("profileImage");
-            if (profileImage) profileImage.src = "assets/img/noprofil.jpg";
-        } catch (err) {
-            console.error("❌ Registration error:", err);
-            alert("Something went wrong. Please try again.");
-          }
-        });
-    });
     
 
   document.getElementById('fileInput').addEventListener('change', function () {

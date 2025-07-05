@@ -161,102 +161,141 @@
   <script src="registration.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getFirestore, collection, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-    // Firebase config
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
       authDomain: "ptsi-system-293aa.firebaseapp.com",
       projectId: "ptsi-system-293aa",
-      storageBucket: "ptsi-system-293aa.firebasestorage.app",
+      storageBucket: "ptsi-system-293aa.appspot.com",
       messagingSenderId: "229290736029",
       appId: "1:229290736029:web:da2246786b173fddcd1774",
       measurementId: "G-2CEM231Z6K"
     };
-
+    
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
-    // 📌 Convert image to base64
-    function readAsBase64(file) {
+    
+    // Convert file to base64
+    function toBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result); // result is base64 string
-        reader.onerror = (err) => reject(err);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
         reader.readAsDataURL(file);
       });
     }
-
+    
     document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById("registrationForm");
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const imageFile = document.getElementById("fileInput")?.files[0];
-        const profileImage = document.getElementById("profileImage");
-
-        try {
-          const docRef = doc(collection(db, "registrationForm"));
-
-          const userData = {
-            id: docRef.id,
-            lastname: form.lastname.value,
-            firstname: form.firstname.value,
-            middlename: form.middlename.value,
-            suffix: form.suffix.value,
-            email: form.email.value,
-            age: form.age.value,
-            gender: form.gender.value,
-            phone: form.phone.value,
-            street: form.street.value,
-            region: form.region.value,
-            province: form.province.value,
-            city: form.city.value,
-            barangay: form.barangay.value,
-            emergencyName: form.emergencyName.value,
-            relationship: form.relationship.value,
-            emergencyNumber: form.emergencyNumber.value,
-            username: form.username.value,
-            password: form.password.value,
-            confirmPassword: form.confirmPassword.value,
-            registrationDate: serverTimestamp(),
-            lastEdited: serverTimestamp()         
-          };
-
-          if (imageFile) {
-            const base64 = await readAsBase64(imageFile);
-            userData.imageBase64 = base64;
-          }
-
-          await setDoc(docRef, userData);
-
-          alert("✅ Registration successful!");
-          form.reset();
-          if (profileImage) profileImage.src = "assets/img/noprofil.jpg";
-        } catch (err) {
-          console.error("❌ Registration error:", err);
-          alert("Something went wrong. Please try again.");
-        }
-      });
-
-      // 🖼 Preview Image
-      document.getElementById("fileInput")?.addEventListener("change", function (e) {
+      const fileInput = document.getElementById("fileInput");
+      const profileImage = document.getElementById("profileImage");
+    
+      // Image preview
+      fileInput?.addEventListener("change", (e) => {
         const file = e.target.files[0];
-        const preview = document.getElementById("profileImage");
-        if (file && preview) {
+        if (file && profileImage) {
           const reader = new FileReader();
           reader.onload = (event) => {
-            preview.src = event.target.result;
+            profileImage.src = event.target.result;
           };
           reader.readAsDataURL(file);
         } else {
-          if (preview) preview.src = "assets/img/noprofil.jpg";
+          profileImage.src = "assets/img/noprofil.jpg";
         }
       });
+    
+      // Trigger input by "Update" button
+      document.getElementById("updateBtn")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        fileInput?.click();
+      });
+    
+      // Remove image
+      document.getElementById("removeBtn")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        fileInput.value = "";
+        profileImage.src = "assets/img/noprofil.jpg";
+      });
+    
+      // Submit form
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+    
+        const password = document.getElementById("regPassword").value.trim();
+        const confirmPassword = document.getElementById("confirmPassword").value.trim();        
+    
+        if (password !== confirmPassword) {
+          alert("❌ Passwords do not match.");
+          return;
+        }
+    
+        const imageFile = fileInput?.files[0];
+        const docRef = doc(collection(db, "registrationForm"));
+    
+        const userData = {
+          id: docRef.id,
+          lastname: form.lastname.value.trim(),
+          firstname: form.firstname.value.trim(),
+          middlename: form.middlename.value.trim(),
+          suffix: form.suffix.value,
+          email: form.email.value,
+          age: form.age.value,
+          gender: form.gender.value,
+          phone: form.phone.value,
+          street: form.street.value,
+          region: form.region.value,
+          province: form.province.value,
+          city: form.city.value,
+          barangay: form.barangay.value,
+          emergencyName: form.emergencyName.value,
+          relationship: form.relationship.value,
+          emergencyNumber: form.emergencyNumber.value,
+          username: form.username.value,
+          password: password,
+          confirmPassword: confirmPassword,
+          registrationDate: serverTimestamp(),
+          lastEdited: serverTimestamp()
+        };
+    
+        if (imageFile) {
+          try {
+            const base64 = await toBase64(imageFile);
+            userData.imageBase64 = base64;
+          } catch (imgErr) {
+            console.error("Image conversion error:", imgErr);
+            alert("Failed to process profile image.");
+            return;
+          }
+        }
+    
+        try {
+          await setDoc(docRef, userData);
+          alert("✅ Registration successful!");
+          form.reset();
+        
+          setTimeout(() => {
+            if (fileInput && profileImage) {
+              fileInput.value = "";
+              profileImage.src = "assets/img/noprofil.jpg";
+            }
+          }, 100);
+        
+        } catch (err) {
+          console.error("❌ Registration error:", err);
+        }
+        
+      });
     });
-
-  </script>
+    </script>
+    
 </body>
 </html>
