@@ -73,7 +73,7 @@
         <input type="email" id="email" name="email">
     
         <label for="phone">Phone Number:</label>
-        <input type="number" id="phone" name="phone">
+        <input type="text" id="phone" name="phone">
     
         <label for="age">Age:</label>
         <input type="number" id="age" name="age" />
@@ -129,7 +129,7 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
     
-      // 🚫 Redirect if not logged in
+      // Redirect if not logged in
       const username = localStorage.getItem("loggedInUsername");
       if (!username) {
         alert("⚠️ You must be logged in to access this page.");
@@ -166,16 +166,16 @@
             document.getElementById("gender").value = userData.gender || "";
           }
         } catch (error) {
-          console.error("🔥 Error loading user data:", error);
+          console.error("Error loading user data:", error);
         }
       };
     
-      // 🔄 Trigger file input on update photo click
+      // Trigger file input on update photo click
       document.getElementById("updateBtn").addEventListener("click", () => {
         document.getElementById("fileInput").click();
       });
     
-      // 📸 Handle profile photo change
+      // Handle profile photo change
       document.getElementById("fileInput").addEventListener("change", async (event) => {
         const file = event.target.files[0];
         if (!file || !userDocId) return;
@@ -189,7 +189,7 @@
             await updateDoc(doc(db, "registrationForm", userDocId), {
               imageBase64: base64String
             });
-            alert("✅ Profile photo updated!");
+            alert("Profile photo updated!");
           } catch (error) {
             console.error("Error updating profile photo:", error);
           }
@@ -197,7 +197,7 @@
         reader.readAsDataURL(file);
       });
     
-      // ❌ Remove photo and reset to default
+      // Remove photo and reset to default
       document.getElementById("removeBtn").addEventListener("click", async () => {
         const defaultImage = "../assets/img/noprofil.jpg";
         document.getElementById("profileImage").src = defaultImage;
@@ -214,7 +214,7 @@
         }
       });
     
-      // 💾 Save user details
+      // Save user details
       document.getElementById("saveBtn").addEventListener("click", async () => {
         if (!userDocId) return;
     
@@ -239,17 +239,17 @@
             gender
           });
           document.getElementById("cardName").textContent = `${firstname} ${middlename} ${lastname}`;
-          alert("✅ User details updated!");
+          alert("User details updated!");
         } catch (error) {
           console.error("Error saving details:", error);
         }
       });
     
-      // 🚪 Logout functionality
+      // Logout functionality
       const logoutBtn = document.getElementById("logout");
       logoutBtn?.addEventListener("click", () => {
         localStorage.removeItem("loggedInUsername");
-        alert("👋 You have been logged out.");
+        alert("You have been logged out.");
         window.location.href = "../index.html";
       });
     </script>

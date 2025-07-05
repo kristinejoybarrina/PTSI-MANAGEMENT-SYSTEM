@@ -138,7 +138,7 @@
         }
     
         if (!match) {
-          alert("❌ Invalid code. No matching lab result found.");
+          alert("Invalid code. No matching lab result found.");
           window.location.href = "labresult-login.html";
           return;
         }
@@ -186,11 +186,11 @@
     
       loadLabResult();
     
-      // ✅ Logout Functionality
+      // Logout Functionality
       const logoutBtn = document.getElementById("logout");
       logoutBtn?.addEventListener("click", () => {
         localStorage.removeItem("loggedInUsername");
-        alert("👋 You have been logged out.");
+        alert("You have been logged out.");
         window.location.href = "../index.html";
       });
     </script>

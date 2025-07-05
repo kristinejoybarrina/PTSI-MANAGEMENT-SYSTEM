@@ -129,7 +129,7 @@
           profileImage.src = "../assets/img/profile-icon.png";
         }
       } catch (err) {
-        console.error("🔥 Error fetching profile image:", err);
+        console.error("Error fetching profile image:", err);
         profileImage.src = "../assets/img/profile-icon.png";
       }
   
@@ -172,7 +172,7 @@
           });
         }
       } catch (err) {
-        console.error("❌ Error loading activities:", err);
+        console.error("Error loading activities:", err);
         document.getElementById("activityList").innerHTML = "<p style='color:red;'>Failed to load activities.</p>";
       }
   
@@ -180,7 +180,7 @@
       const logoutBtn = document.getElementById("logout");
       logoutBtn.addEventListener("click", () => {
         localStorage.removeItem("loggedInUsername");
-        alert("👋 You have been logged out.");
+        alert("You have been logged out.");
         window.location.href = "../index.html";
       });
     };
