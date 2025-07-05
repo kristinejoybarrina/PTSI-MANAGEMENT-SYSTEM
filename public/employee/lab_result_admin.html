@@ -37,34 +37,13 @@
               </div>
               <div class="labresult-title"><strong>Lab Result</strong></div>
             </div>
-            <div class="header-icons">
-                <span id="notificationBell" class="notification-bell">
-                    <img src="../assets/img/notif-icon.png" alt="Notification Icon">
-                </span>
-                <div class="logout-btn" style="display: flex; align-items: center; cursor: pointer; margin-left: 20px;">
-                    <img src="../assets/img/logout-icon.png" alt="Logout" style="width: 20px; height: 20px; margin-right: 5px;">
-                    <span>Logout</span>
-                </div>
-            </div>
         </div>
-
-        <div id="notificationDropdown" class="notification-dropdown">
-            <div class="notification-header">
-                <h3>Notifications</h3>
-            </div>
-            <div id="notificationItems" class="notification-items"></div>
-            <div class="all-notifications-link-container">
-                <a href="#" class="all-notifications-link">See all</a>
-            </div>
-        </div>
-    
+        
     <h1><br>Lab Result Summary</h1>
 
         <div class="user-account-container">
         <a href="add_entry_admin.html" class="add-user-btn">Add New User</a>
         <input type="text" class="search-bar" placeholder="Search users by name or Lab ID...">
-        </div>
-
         <table class="user-table">
             <thead>
                 <tr>
@@ -176,7 +155,7 @@ function renderResults(results) {
         <td>${res.resultType}</td>
         <td>${fileCell}</td>
         <td>
-          <a href="labresult_edit_admin.html" class="edit-btn" data-id="${res.id}" data-patient-id="${res.patientId}">Edit</a>
+          <a href="labresult_edit.html" class="edit-btn" data-id="${res.id}" data-patient-id="${res.patientId}">Edit</a>
           <button class="delete-btn" data-id="${res.id}" data-patient-id="${res.patientId}">Delete</button>
         </td>
       `;
