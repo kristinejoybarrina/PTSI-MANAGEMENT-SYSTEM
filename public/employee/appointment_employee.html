@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: https: http:;">
     <title>Appointment - Employee</title>
     <link rel="stylesheet" href="../assets/css/appointment-style.css">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
@@ -51,24 +52,7 @@
         </div>
     </div>
 
-    <script src="../js/sidebar.js"></script>
-    <script>
-        // Navigation
-        document.getElementById('dashboard').addEventListener('click', function() {
-            window.location.href = 'dashboard_employee.html';
-        });
-
-        document.getElementById('lab-result').addEventListener('click', function() {
-            window.location.href = 'lab_result_employee.html';
-        });
-
-        document.getElementById('logout').addEventListener('click', function() {
-            // Clear any session data
-            localStorage.removeItem('loggedInUsername');
-            localStorage.removeItem('userRole');
-            // Redirect to login page
-            window.location.href = '../index.html';
-        });
-    </script>
+    <!--<script src="../js/sidebar.js"></script>-->
+    <script src="../assets/js/employee_nav.js"></script>
 </body>
 </html>
