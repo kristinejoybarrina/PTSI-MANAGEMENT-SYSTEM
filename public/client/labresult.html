@@ -41,7 +41,8 @@
             <span><img src="../assets/img/notif-icon.png"></span>
             <span>
                 <a href="profile.html">
-                    <img src="../assets/img/profile-icon.png">
+                <img id="profileImage" src="../assets/img/profile-icon.png" style="width: 32px; height: 32px; border-radius: 50%;" />
+
                 </a>
                 </span>
           </div>
@@ -79,14 +80,16 @@
 
     <script src="../assets/js/menu.js"></script>
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-      import {
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
         getFirestore,
         collection,
+        query,
+        where,
         getDocs
-      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    
-      const firebaseConfig = {
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    const firebaseConfig = {
         apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
         authDomain: "ptsi-system-293aa.firebaseapp.com",
         projectId: "ptsi-system-293aa",
@@ -94,107 +97,140 @@
         messagingSenderId: "229290736029",
         appId: "1:229290736029:web:da2246786b173fddcd1774",
         measurementId: "G-2CEM231Z6K"
-      };
-    
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-    
-      async function loadLabResult() {
-        const code = sessionStorage.getItem("labResultCode");
-    
-        console.log("📦 Retrieved labResultCode:", code);
-    
-        if (!code || code.trim() === "") {
-          alert("⚠️ No code found. Please enter your lab result code first.");
-          window.location.href = "labresult-login.html";
-          return;
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.addEventListener("DOMContentLoaded", async () => {
+        const savedUsername = localStorage.getItem("loggedInUsername");
+
+        if (!savedUsername) {
+            alert("⚠️ You must be logged in to access this page.");
+            window.location.href = "../index.html";
+            return;
         }
-    
-        let match = null;
-    
-        const patientSnapshot = await getDocs(collection(db, "patientLab"));
-    
-        for (const patientDoc of patientSnapshot.docs) {
-          const patientData = patientDoc.data();
-    
-          const labResultsSnapshot = await getDocs(
-            collection(db, "patientLab", patientDoc.id, "labResults")
-          );
-    
-          for (const labDoc of labResultsSnapshot.docs) {
-            const labData = labDoc.data();
-    
-            if (labData.resultCode === code) {
-              match = {
-                ...labData,
-                patientName: `${patientData.firstName || ''} ${patientData.middleName || ''} ${patientData.lastName || ''}`.trim(),
-                laboratoryId: patientData.laboratoryId || "Unknown"
-              };
-              break;
+
+        // Load profile image
+        const profileImage = document.getElementById("profileImage");
+
+        try {
+            const q = query(collection(db, "registrationForm"), where("username", "==", savedUsername));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const userData = snapshot.docs[0].data();
+
+                if (userData.imageBase64?.startsWith("data:image")) {
+                    profileImage.src = userData.imageBase64;
+                } else {
+                    profileImage.src = "../assets/img/profile-icon.png";
+                }
+            } else {
+                profileImage.src = "../assets/img/profile-icon.png";
             }
-          }
-    
-          if (match) break;
+        } catch (err) {
+            console.error("🔥 Error fetching profile image:", err);
+            profileImage.src = "../assets/img/profile-icon.png";
         }
-    
+
+        // Load Lab Result
+        await loadLabResult();
+
+        // Logout Functionality
+        const logoutBtn = document.getElementById("logout");
+        logoutBtn?.addEventListener("click", () => {
+            localStorage.removeItem("loggedInUsername");
+            alert("👋 You have been logged out.");
+            window.location.href = "../index.html";
+        });
+    });
+
+    async function loadLabResult() {
+        const code = sessionStorage.getItem("labResultCode");
+
+        console.log("📦 Retrieved labResultCode:", code);
+
+        if (!code || code.trim() === "") {
+            alert("⚠️ No code found. Please enter your lab result code first.");
+            window.location.href = "labresult-login.html";
+            return;
+        }
+
+        let match = null;
+        const patientSnapshot = await getDocs(collection(db, "patientLab"));
+
+        for (const patientDoc of patientSnapshot.docs) {
+            const patientData = patientDoc.data();
+
+            const labResultsSnapshot = await getDocs(
+                collection(db, "patientLab", patientDoc.id, "labResults")
+            );
+
+            for (const labDoc of labResultsSnapshot.docs) {
+                const labData = labDoc.data();
+
+                if (labData.resultCode === code) {
+                    match = {
+                        ...labData,
+                        patientName: `${patientData.firstName || ''} ${patientData.middleName || ''} ${patientData.lastName || ''}`.trim(),
+                        laboratoryId: patientData.laboratoryId || "Unknown"
+                    };
+                    break;
+                }
+            }
+
+            if (match) break;
+        }
+
         if (!match) {
-          alert("Invalid code. No matching lab result found.");
-          window.location.href = "labresult-login.html";
-          return;
+            alert("Invalid code. No matching lab result found.");
+            window.location.href = "labresult-login.html";
+            return;
         }
-    
+
         const tbody = document.getElementById("labResultsBody");
         const row = document.createElement("tr");
-    
+
         row.innerHTML = `
-          <td class="table-data-cell">#${match.laboratoryId}</td>
-          <td class="table-data-cell">${match.date}</td>
-          <td class="table-data-cell">${match.resultType}</td>
-          <td class="table-data-cell">
-            <a href="#" class="download-link">labresult.pdf <i class="fas fa-download download-icon"></i></a>
-          </td>
+            <td class="table-data-cell">#${match.laboratoryId}</td>
+            <td class="table-data-cell">${match.date}</td>
+            <td class="table-data-cell">${match.resultType}</td>
+            <td class="table-data-cell">
+                <a href="#" class="download-link">labresult.pdf <i class="fas fa-download download-icon"></i></a>
+            </td>
         `;
-    
+
         tbody.appendChild(row);
         document.getElementById("patientName").textContent = match.patientName;
-    
-        function downloadPDF(base64Data, filename) {
-          const base64 = base64Data.split(',')[1];
-          const binary = atob(base64);
-          const len = binary.length;
-          const buffer = new Uint8Array(len);
-          for (let i = 0; i < len; i++) {
-            buffer[i] = binary.charCodeAt(i);
-          }
-    
-          const blob = new Blob([buffer], { type: 'application/pdf' });
-          const blobURL = URL.createObjectURL(blob);
-    
-          const a = document.createElement('a');
-          a.href = blobURL;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }
-    
+
         row.querySelector(".download-link").addEventListener("click", (e) => {
-          e.preventDefault();
-          downloadPDF(match.pdfBase64, `LabResult-${code}.pdf`);
+            e.preventDefault();
+            downloadPDF(match.pdfBase64, `LabResult-${code}.pdf`);
         });
-      }
-    
-      loadLabResult();
-    
-      // Logout Functionality
-      const logoutBtn = document.getElementById("logout");
-      logoutBtn?.addEventListener("click", () => {
-        localStorage.removeItem("loggedInUsername");
-        alert("You have been logged out.");
-        window.location.href = "../index.html";
-      });
+    }
+
+    function downloadPDF(base64Data, filename) {
+        const base64 = base64Data.split(',')[1];
+        const binary = atob(base64);
+        const len = binary.length;
+        const buffer = new Uint8Array(len);
+
+        for (let i = 0; i < len; i++) {
+            buffer[i] = binary.charCodeAt(i);
+        }
+
+        const blob = new Blob([buffer], { type: 'application/pdf' });
+        const blobURL = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = blobURL;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
     </script>
-    
-    
+
 </body>
 </html>
