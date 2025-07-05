@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../assets/css/dashboard_admin.css">
     <link rel="stylesheet" href="../assets/css/calendar.css">
     <link rel="stylesheet" href="../assets/css/appointment_modal.css">
-    <link rel="stylesheet" href="../assets/css/activities.css">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -30,43 +29,15 @@
             <img src="../assets/img/logout-icon.png" alt="Logout Icon">
             <h3>Logout</h3>
         </div>
-        
     </div>
-
     <div class="main-content">
         <div class="header">
-            <div class="header-left">
-              <div class="hamburger" id="hamburger">
-                <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
-              </div>
-              <div class="labresult-title"><strong>Dashboard</strong></div>
+          <div class="header-left">
+            <div class="hamburger" id="hamburger">
+              <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
             </div>
-            <div class="header-icons">
-                <span id="notificationBell" class="notification-bell">
-                    <img src="../assets/img/notif-icon.png" alt="Notification Icon">
-                </span>
-                <div class="profile-dropdown">
-                    <span class="profile-icon-container">
-                        <img src="../assets/img/profile-icon.png" alt="Profile Icon" class="profile-icon">
-                    </span>
-                    <div class="dropdown-content">
-                        <a href="#" id="viewProfile">View Profile</a>
-                        <a href="#" id="settings">Settings</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" id="logoutTop">Logout</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="notificationDropdown" class="notification-dropdown">
-            <div class="notification-header">
-                <h3>Notifications</h3>
-            </div>
-            <div id="notificationItems" class="notification-items"></div>
-            <div class="all-notifications-link-container">
-                <a href="#" class="all-notifications-link">See all</a>
-            </div>
+            <div class="dashboard-title"><strong>Dashboard</strong></div>
+          </div>
         </div>
     
     <h1><br>Welcome, Admin!</h1>
@@ -88,23 +59,6 @@
             <div class="stat-card">
                 <h3>Pending Results</h3>
                 <p id="pendingResults">0</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="recent-activities">
-        <div class="activities-header">
-            <h2><img src="../assets/img/activity-icon.png" alt="Activities">Recent Activities</h2>
-            <button id="refreshActivities" class="refresh-btn" title="Refresh activities">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-                </svg>
-            </button>
-        </div>
-        <div class="activity-list" id="recentActivities">
-            <div class="activity-loading">
-                <div class="loading-spinner"></div>
-                <p>Loading activities...</p>
             </div>
         </div>
     </div>
