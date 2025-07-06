@@ -101,36 +101,48 @@
                     <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
                 </div>
                 <div class="labresult-title"><strong>Dashboard</strong></div>
-            </div>
-            <div class="header-icons">
-                <span id="notificationBell" class="notification-bell">
-                    <img src="../assets/img/notif-icon.png" alt="Notification Icon">
-                </span>
-                <span><img src="../assets/img/profile-icon.png" alt="Profile Icon"></span>
-            </div>
-        </div>
+            </div></div>
 
         <div class="dashboard-content">
             <div class="welcome-section">
                 <h1>Welcome, <span id="employeeName">Employee</span>!</h1>
                 <p>Here's what's happening today.</p>
             </div>
-            
-            <div class="calendar-container">
-                <div id="calendarEmployee"></div>
+    <div class="dashboard-content">
+        <div class="calendar-container">
+            <div id="calendarAdmin"></div>
+        </div>
+
+        <div class="dashboard-stats">
             </div>
-            
-            <div class="upcoming-tasks">
-                <h2>Upcoming Tasks</h2>
-                <ul class="task-list" id="upcomingTasks">
-                    <!-- Tasks will be populated by JavaScript -->
-                </ul>
+            <div class="stat-card">
+                <h3>Appointments Today</h3>
+                <p id="todaysAppointments">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Pending Results</h3>
+                <p id="pendingResults">0</p>
             </div>
         </div>
     </div>
 
-    <script src="../assets/js/menu.js"></script>
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="appointment-modal">
+        <div class="appointment-modal-content">
+            <button class="close-modal" id="closeAppointmentModal">&times;</button>
+            <h3>Appointments for <span id="modalDate"></span></h3>
+            <div class="appointment-list" id="appointmentList">
+                <!-- Appointments will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+            
+
+    <!--<script src="../assets/js/menu.js"></script>-->
     <script src="../assets/js/calendar.js"></script>
+    <script src="../assets/js/employee_nav.js"></script>
+    <script src="../assets/js/appointment_modal.js"></script>
     <script>
         // Set the employee name if available
         const loggedInUser = localStorage.getItem('loggedInUsername');
@@ -138,63 +150,54 @@
             document.getElementById('employeeName').textContent = loggedInUser;
         }
         
-        // Initialize calendar with sample tasks when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            // Add sample tasks (replace with actual data from your database)
-            const tasks = [
-                { time: '09:00 AM', description: 'Morning briefing' },
-                { time: '10:30 AM', description: 'Patient consultation' },
-                { time: '02:00 PM', description: 'Lab results review' },
-                { time: '04:30 PM', description: 'Team meeting' }
-            ];
+        // Initialize calendar
+        if (window.adminCalendar) {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
             
-            const taskList = document.getElementById('upcomingTasks');
-            tasks.forEach(task => {
-                const li = document.createElement('li');
-                li.className = 'task-item';
-                li.innerHTML = `
-                    <span>${task.description}</span>
-                    <span class="task-time">${task.time}</span>
-                `;
-                taskList.appendChild(li);
-            });
+            window.adminCalendar.addEvent(today, 'Team Meeting', 'Monthly team sync');
+            window.adminCalendar.addEvent(tomorrow, 'Doctor Appointment', 'Follow-up checkup');
             
-            // Add sample events to the calendar
-            if (window.employeeCalendar) {
-                const today = new Date();
-                const tomorrow = new Date(today);
-                tomorrow.setDate(today.getDate() + 1);
-                
-                window.employeeCalendar.addEvent(today, 'Team Meeting', 'Daily standup');
-                window.employeeCalendar.addEvent(tomorrow, 'Training', 'New equipment training');
-                
-                // Handle date clicks
-                window.employeeCalendar.options.onDateClick = (date) => {
-                    console.log('Date clicked:', date);
-                    // You can add functionality here to show details for the selected date
-                };
+            // Update stats (replace with actual data from your database)
+            document.getElementById('todaysAppointments').textContent = '8';
+            document.getElementById('pendingResults').textContent = '3';
+        }
+
+                // Close modal when clicking outside the modal content
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('appointmentModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
             }
         });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.getElementById('appointmentModal').style.display = 'none';
+            }
+        });
+
+        // Handle view appointment button clicks (delegated event)
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.view-appointment-btn')) {
+                const appointmentId = event.target.closest('.view-appointment-btn').getAttribute('data-id');
+                console.log('Viewing appointment:', appointmentId);
+                // TODO: Implement view appointment details functionality
+                // This could open another modal or navigate to an appointment details page
+            }});
+        
         
         // Logout functionality
-        document.getElementById('logout').addEventListener('click', function() {
-            // Clear any session data
-            localStorage.removeItem('loggedInUsername');
-            localStorage.removeItem('userRole');
-            // Redirect to login page
-            window.location.href = '../index.html';
-        });
+        // document.getElementById('logout').addEventListener('click', function() {
+        //     // Clear any session data
+        //     localStorage.removeItem('loggedInUsername');
+        //     localStorage.removeItem('userRole');
+        //     // Redirect to login page
+        //     window.location.href = '../index.html';
+        // });
         
-        // Navigation
-        document.getElementById('lab-result').addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'lab_result_employee.html';
-        });
-        
-        document.getElementById('appointment').addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'appointment_employee.html';
-        });
     </script>
 </body>
 </html>
