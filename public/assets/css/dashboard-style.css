@@ -445,11 +445,15 @@ cursor: pointer;
 
   .main-content {
     margin-left: 0;
+    padding-left:30px;
+    padding-right:30px;
   }
 
   .header {
     left: 0;
     width: 100%;
+    padding-left:30px;
+    padding-right:30px;
   }
 }
 

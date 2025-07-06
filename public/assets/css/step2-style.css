@@ -185,6 +185,16 @@ h2 {
   justify-content: center;
 }
 
+.main-content h2 {
+  font-size: 28px;
+  margin: 0 0 20px;
+  padding: 0 20px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding-top: 60px;
+}
+
 .step-nav {
   display: flex;
   justify-content: center;
@@ -305,4 +315,177 @@ input, select {
   color: black;
 }
 
+/* Hamburger icon (initially hidden) */
+.hamburger {
+  position: relative;
+  z-index: 1101; /* above sidebar */
+}
 
+.hamburger img {
+  width: 25px;
+  height: 25px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  right: -18px;
+  top: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 2px solid #0a1b52;
+  z-index: 1102;
+  background-color: transparent; 
+  padding: 3px;
+}
+
+.sidebar-toggle img {
+  width: 30px;
+  height: 30px;
+  filter: invert(1); 
+  padding-bottom: 15px;
+  padding-right: 15px;
+}
+
+.sidebar.collapsed {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 0;
+}
+
+.sidebar.collapsed ~ .main-content .header {
+  left: 0;
+  width: 100%;
+}
+.hamburger {
+  position: relative;
+  z-index: 1001; /* Make sure it's above the header */
+  display: block;
+  cursor: pointer;
+  padding-top: 5px;
+  padding-right: 5px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.hamburger:hover {
+  background-color: #dedfe0;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 270px;
+  padding: 50px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.labresult-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .header {
+    left: 0;
+    width: 100%;
+  }
+}
+
+
+@media (max-width: 640px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 120px 0px;
+    align-items: stretch;
+    font-size: 20px;
+  }
+
+  .step-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;         /* reduced spacing */
+    padding: 0 10px;     /* smaller horizontal padding */
+  }
+
+  .step {
+    font-size: 0.85rem;  /* smaller text */
+  }
+
+  .step span {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;   /* smaller number inside circle */
+  }
+
+  .step-box {
+    padding: 1.2rem;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 85%;
+    box-sizing: border-box;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-row > div {
+    width: 100%;
+  }
+
+  .button-row {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .back-button,
+  .submit-button {
+    padding: 0.8rem 1rem;
+    text-align: center;
+  }
+  .main-content h2 {
+    font-size: 30px;
+    padding: 10px 10px;
+    text-align: center;
+  }
+}

@@ -34,3 +34,59 @@
   </script>
 </body>
 </html>
+
+@media (max-width: 640px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 40px 0px;
+    align-items: stretch;
+  }
+
+  .step-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;         /* reduced spacing */
+    padding: 0 10px;     /* smaller horizontal padding */
+  }
+
+  .step {
+    font-size: 0.85rem;  /* smaller text */
+  }
+
+  .step span {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;   /* smaller number inside circle */
+  }
+
+  .step-box {
+    padding: 1.2rem;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 85%;
+    box-sizing: border-box;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-row > div {
+    width: 100%;
+  }
+
+  .button-row {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .back-button,
+  .submit-button {
+    padding: 0.8rem 1rem;
+    text-align: center;
+  }
+}

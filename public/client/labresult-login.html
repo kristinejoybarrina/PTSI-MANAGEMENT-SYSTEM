@@ -90,7 +90,7 @@
         serverTimestamp
     } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-    // ✅ FIREBASE CONFIG
+    // FIREBASE CONFIG
     const firebaseConfig = {
         apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
         authDomain: "ptsi-system-293aa.firebaseapp.com",
@@ -108,7 +108,7 @@
 
         const savedUsername = localStorage.getItem("loggedInUsername");
 
-        // ✅ Redirect if not logged in
+        // Redirect if not logged in
         if (!savedUsername) {
             alert("⚠️ You must be logged in to access this page.");
             window.location.href = "../index.html";
@@ -117,7 +117,7 @@
 
         const profileImage = document.getElementById("profileImage");
 
-        // ✅ Load Profile Image
+        // Load Profile Image
         try {
             const q = query(collection(db, "registrationForm"), where("username", "==", savedUsername));
             const snapshot = await getDocs(q);
@@ -134,14 +134,14 @@
                 profileImage.src = "../assets/img/profile-icon.png";
             }
         } catch (err) {
-            console.error("🔥 Error fetching profile image:", err);
+            console.error("Error fetching profile image:", err);
             profileImage.src = "../assets/img/profile-icon.png";
         }
 
-        // ✅ Log Page Visit
+        // Log Page Visit
         logActivity("Visited Lab Result Page", "Lab Result");
 
-        // ✅ Lab Result Form Submission
+        // Lab Result Form Submission
         document.getElementById("labresultCode").addEventListener("submit", async (e) => {
             e.preventDefault();
 
@@ -156,16 +156,16 @@
             window.location.href = "labresult.html";
         });
 
-        // ✅ Logout Functionality
+        // Logout Functionality
         const logoutBtn = document.getElementById("logout");
         logoutBtn?.addEventListener("click", () => {
             localStorage.removeItem("loggedInUsername");
-            alert("👋 You have been logged out.");
+            alert("You have been logged out.");
             window.location.href = "../index.html";
         });
     });
 
-    // ✅ Log Activity Function
+    // Log Activity Function
     async function logActivity(action, page) {
         try {
             await addDoc(collection(db, "recentActivities"), {
@@ -175,7 +175,7 @@
                 timestamp: serverTimestamp()
             });
         } catch (err) {
-            console.error("❌ Failed to log activity:", err);
+            console.error("Failed to log activity:", err);
         }
     }
     </script>

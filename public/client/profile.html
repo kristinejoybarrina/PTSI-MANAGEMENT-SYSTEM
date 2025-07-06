@@ -1,296 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-    <link rel="stylesheet" href="../assets/css/profile.css">
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile</title>
+  <link rel="stylesheet" href="../assets/css/profile.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="https://philtbsociety.org/wp-content/uploads/2022/07/cropped-1-PTSI-New-Logo-Original-1-600x786.png" alt="PTSI Logo" class="logo">
-            <h2>PTSI</h2>
-            <div class="sidebar-toggle" id="toggleSidebar">
-                <img src="../assets/img/arrow-left.png" alt="Hide Sidebar">
-            </div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="https://philtbsociety.org/wp-content/uploads/2022/07/cropped-1-PTSI-New-Logo-Original-1-600x786.png" alt="PTSI Logo" class="logo" />
+      <h2>PTSI</h2>
+      <div class="sidebar-toggle" id="toggleSidebar">
+        <img src="../assets/img/arrow-left.png" alt="Hide Sidebar" />
+      </div>
+    </div>
+    <ul class="menu">
+      <h3>Menu</h3>
+      <li id="dashboard"><i class="icon"><img src="../assets/img/dash-icon.png" /></i><h3>Dashboard</h3></li>
+      <li id="lab-result"><i class="icon"><img src="../assets/img/lab-result-icon.png" /></i><h3>Lab Result</h3></li>
+      <li id="appointment"><i class="icon"><img src="../assets/img/appointment-icon.png" /></i><h3>Appointment</h3></li>
+    </ul>
+    <div class="logout" id="logout">
+      <img src="../assets/img/logout-icon.png" alt="Logout Icon" />
+      <h3>Logout</h3>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <div class="header-left">
+        <div class="hamburger" id="hamburger">
+          <img src="../assets/img/hamburger-icon.png" alt="Menu" />
         </div>
-        <ul class="menu">
-        <h3>Menu</h3>
-        <li id="dashboard"><i class="icon"><img src="../assets/img/dash-icon.png"></i><h3>Dashboard</h3></li>
-        <li id="lab-result"><i class="icon"><img src="../assets/img/lab-result-icon.png"></i><h3>Lab Result</h3></li>
-        <li id="appointment"><i class="icon"><img src="../assets/img/appointment-icon.png"></i><h3>Appointment</h3></li>
-        </ul>
-        <div class="logout" id="logout">
-            <img src="../assets/img/logout-icon.png" alt="Logout Icon">
-            <h3>Logout</h3>
-        </div>
-        
+        <div class="dashboard-title"><strong>Profile</strong></div>
+      </div>
+      <div class="header-icons">
+        <span><img src="../assets/img/notif-icon.png" /></span>
+        <span>
+          <a href="profile.html">
+            <img id="headerProfileImage" src="../assets/img/profile-icon.png" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" />
+          </a>
+        </span>
+      </div>
     </div>
 
-    <div class="main-content">
-        <div class="header">
-          <div class="header-left">
-            <div class="hamburger" id="hamburger">
-              <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
-            </div>
-            <div class="dashboard-title"><strong>Profile</strong></div>
-          </div>
-    
-          <div class="header-icons">
-            <span>
-                <a href="profile.html">
-                <img id="profileImage" src="../assets/img/profile-icon.png" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" />
-
-                </a>
-                </span>
-          </div>
-        </div>
-    
-    <h1><br>Profile Account Setting</h1>
+    <h1><br />Profile Account Setting</h1>
 
     <div class="profile-container">
-    <div class="profile-card">
-        <img src="../assets/img/noprofil.jpg" alt="Profile Picture" id="profileImage" height="150" style="border-radius: 50%; border: 2px solid #ccc;">
+      <div class="profile-card">
+        <img src="" alt="Profile Picture" id="profileImage" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
         <div class="round">
-          <input type="file" id="fileInput" name="image" accept="image/*">
+          <input type="file" id="fileInput" name="image" accept="image/*" />
           <i class="fa fa-camera"></i>
         </div>
-        <h3 id="cardName"></h3>        
-
+        <h3 id="cardName"></h3>
         <button id="updateBtn">Update Photo</button>
         <button id="removeBtn" style="margin-top: 10px;">Remove</button>
-    </div>
-    
-    <div class="user-details">
+      </div>
+
+      <div class="user-details">
         <h3>User details</h3>
         <label for="fullName">Name:</label>
-        <input type="text" id="fullName" name="fullName">
-    
+        <input type="text" id="fullName" name="fullName" />
+
         <label for="email">Email Address:</label>
-        <input type="email" id="email" name="email">
-    
+        <input type="email" id="email" name="email" />
+
         <label for="phone">Phone Number:</label>
-        <input type="text" id="phone" name="phone">
-    
+        <input type="number" id="phone" name="phone" />
+
         <label for="age">Age:</label>
         <input type="number" id="age" name="age" />
-    
+
         <label for="gender">Gender:</label>
         <select id="gender" name="gender">
-            <option value="">Select</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Prefer Not to Say">Prefer Not to Say</option>
+          <option value="">Select</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Prefer Not to Say">Prefer Not to Say</option>
         </select>
-    
+
         <button id="saveBtn" style="margin-top: 10px;">Save Details</button>
-    </div>
-    
+      </div>
     </div>
 
     <div class="mobile-app-section">
-        <div>
-            <h4>Mobile App</h4>
-            <p><strong>QR code for mobile app access</strong></p>
-            <p>This site has mobile app access enabled.</p>
-            <a href="#">Download the mobile app.</a>
-        </div>
-        <div>
-            <p>Scan the QR code with your mobile app to fill in the site URL in your app.</p>
-            <img src="../assets/img/qr-code.png" alt="QR Code" width="120">
-        </div>
+      <div>
+        <h4>Mobile App</h4>
+        <p><strong>QR code for mobile app access</strong></p>
+        <p>This site has mobile app access enabled.</p>
+        <a href="#">Download the mobile app.</a>
+      </div>
+      <div>
+        <p>Scan the QR code with your mobile app to fill in the site URL in your app.</p>
+        <img src="../assets/img/qr-code.png" alt="QR Code" width="120" />
+      </div>
     </div>
+  </div>
 
-    <script src="../assets/js/menu.js"></script>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-      import {
-        getFirestore,
-        collection,
-        query,
-        where,
-        getDocs,
-        doc,
-        updateDoc
-      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-      
-      // Logout functionality
-      document.addEventListener('DOMContentLoaded', function() {
-        const logoutBtn = document.getElementById('logout');
-        if (logoutBtn) {
-          logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            localStorage.removeItem('loggedInUsername');
-            window.location.href = '../index.html';
-          });
-        }
-      });
-    
-      const firebaseConfig = {
-        apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
-        authDomain: "ptsi-system-293aa.firebaseapp.com",
-        projectId: "ptsi-system-293aa",
-        storageBucket: "ptsi-system-293aa.firebasestorage.app",
-        messagingSenderId: "229290736029",
-        appId: "1:229290736029:web:da2246786b173fddcd1774"
-      };
-    
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+  <script src="../assets/js/menu.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      doc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-      const usernameElement = document.getElementById("username");
-      const profileImage = document.getElementById("profileImage");
-  
+    const firebaseConfig = {
+      apiKey: "AIzaSyCMK2EIUDf_N5K4qfe2G214gAgctoUAp3Q",
+      authDomain: "ptsi-system-293aa.firebaseapp.com",
+      projectId: "ptsi-system-293aa",
+      storageBucket: "ptsi-system-293aa.firebasestorage.app",
+      messagingSenderId: "229290736029",
+      appId: "1:229290736029:web:da2246786b173fddcd1774"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const username = localStorage.getItem("loggedInUsername");
+    if (!username) {
+      alert("You must be logged in to access this page.");
+      window.location.href = "../index.html";
+    }
+
+    let userDocId = null;
+
+    window.onload = async () => {
       try {
-        const q = query(collection(db, "registrationForm"), where("username", "==", savedUsername));
+        const q = query(collection(db, "registrationForm"), where("username", "==", username));
         const snapshot = await getDocs(q);
-  
+
         if (!snapshot.empty) {
-          const userData = snapshot.docs[0].data();
-          usernameElement.textContent = userData.firstname || savedUsername;
-  
+          const userDoc = snapshot.docs[0];
+          userDocId = userDoc.id;
+          const userData = userDoc.data();
+
+          // Update profile images
+          const profileImage = document.getElementById("profileImage");
+          const headerProfileImage = document.getElementById("headerProfileImage");
           if (userData.imageBase64?.startsWith("data:image")) {
             profileImage.src = userData.imageBase64;
+            headerProfileImage.src = userData.imageBase64;
           } else {
-            profileImage.src = "../assets/img/profile-icon.png";
+            profileImage.src = "../assets/img/noprofil.jpg";
+            headerProfileImage.src = "../assets/img/profile-icon.png";
           }
-        } else {
-          usernameElement.textContent = savedUsername;
-          profileImage.src = "../assets/img/profile-icon.png";
-        }
-      } catch (err) {
-        console.error("Error fetching profile image:", err);
-        profileImage.src = "../assets/img/profile-icon.png";
-      }
-    
-      // Redirect if not logged in
-      const username = localStorage.getItem("loggedInUsername");
-      if (!username) {
-        alert("⚠️ You must be logged in to access this page.");
-        window.location.href = "../index.html";
-      }
-    
-      let userDocId = null;
-    
-      window.onload = async () => {
-        try {
-          const q = query(collection(db, "registrationForm"), where("username", "==", username));
-          const snapshot = await getDocs(q);
-    
-          if (!snapshot.empty) {
-            const userDoc = snapshot.docs[0];
-            userDocId = userDoc.id;
-            const userData = userDoc.data();
-    
-            // Profile image
-            const profileImage = document.getElementById("profileImage");
-            if (userData.imageBase64?.startsWith("data:image")) {
-              profileImage.src = userData.imageBase64;
-            }
-    
-            // Profile card name
-            document.getElementById("cardName").textContent = `${userData.firstname} ${userData.middlename} ${userData.lastname}`;
 
-    
-            // User details
-            document.getElementById("fullName").value = `${userData.firstname} ${userData.middlename || ""} ${userData.lastname}`.trim();
-            document.getElementById("email").value = userData.email || "";
-            document.getElementById("phone").value = userData.phone || "";
-            document.getElementById("age").value = userData.age || "";
-            document.getElementById("gender").value = userData.gender || "";
-          }
-        } catch (error) {
-          console.error("Error loading user data:", error);
+          // User name display
+          document.getElementById("cardName").textContent = `${userData.firstname} ${userData.middlename} ${userData.lastname}`;
+          document.getElementById("fullName").value = `${userData.firstname} ${userData.middlename || ""} ${userData.lastname}`.trim();
+          document.getElementById("email").value = userData.email || "";
+          document.getElementById("phone").value = userData.phone || "";
+          document.getElementById("age").value = userData.age || "";
+          document.getElementById("gender").value = userData.gender || "";
         }
-      };
-    
-      // Trigger file input on update photo click
-      document.getElementById("updateBtn").addEventListener("click", () => {
-        document.getElementById("fileInput").click();
-      });
-    
-      // Handle profile photo change
-      document.getElementById("fileInput").addEventListener("change", async (event) => {
-        const file = event.target.files[0];
-        if (!file || !userDocId) return;
-    
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64String = reader.result;
-          document.getElementById("profileImage").src = base64String;
-    
-          try {
-            await updateDoc(doc(db, "registrationForm", userDocId), {
-              imageBase64: base64String
-            });
-            alert("Profile photo updated!");
-          } catch (error) {
-            console.error("Error updating profile photo:", error);
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    
-      // Remove photo and reset to default
-      document.getElementById("removeBtn").addEventListener("click", async () => {
-        const defaultImage = "../assets/img/noprofil.jpg";
-        document.getElementById("profileImage").src = defaultImage;
-    
-        if (userDocId) {
-          try {
-            await updateDoc(doc(db, "registrationForm", userDocId), {
-              imageBase64: ""
-            });
-            alert("🗑️ Profile photo removed!");
-          } catch (error) {
-            console.error("Error removing profile photo:", error);
-          }
-        }
-      });
-    
-      // Save user details
-      document.getElementById("saveBtn").addEventListener("click", async () => {
-        if (!userDocId) return;
-    
-        const fullName = document.getElementById("fullName").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const age = document.getElementById("age").value.trim();
-        const gender = document.getElementById("gender").value;
-    
-        const [firstname, ...rest] = fullName.split(" ");
-        const lastname = rest.pop() || "";
-        const middlename = rest.join(" ");
-    
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+    };
+
+    document.getElementById("updateBtn").addEventListener("click", () => {
+      document.getElementById("fileInput").click();
+    });
+
+    document.getElementById("fileInput").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file || !userDocId) return;
+
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result;
+        document.getElementById("profileImage").src = base64String;
+        document.getElementById("headerProfileImage").src = base64String;
+
         try {
           await updateDoc(doc(db, "registrationForm", userDocId), {
-            firstname,
-            middlename,
-            lastname,
-            email,
-            phone,
-            age,
-            gender
+            imageBase64: base64String
           });
-          document.getElementById("cardName").textContent = `${firstname} ${middlename} ${lastname}`;
-          alert("User details updated!");
+          alert("Profile photo updated");
         } catch (error) {
-          console.error("Error saving details:", error);
+          console.error("Error updating profile photo:", error);
         }
-      });
-    
-      // Logout functionality
-      const logoutBtn = document.getElementById("logout");
-      logoutBtn?.addEventListener("click", () => {
-        localStorage.removeItem("loggedInUsername");
-        alert("You have been logged out.");
-        window.location.href = "../index.html";
-      });
-    </script>
-    
-      
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("removeBtn").addEventListener("click", async () => {
+      const defaultImage = "../assets/img/noprofil.jpg";
+      document.getElementById("profileImage").src = defaultImage;
+      document.getElementById("headerProfileImage").src = "../assets/img/profile-icon.png";
+
+      if (userDocId) {
+        try {
+          await updateDoc(doc(db, "registrationForm", userDocId), {
+            imageBase64: ""
+          });
+          alert("Profile photo removed");
+        } catch (error) {
+          console.error("Error removing profile photo:", error);
+        }
+      }
+    });
+
+    document.getElementById("saveBtn").addEventListener("click", async () => {
+      if (!userDocId) return;
+
+      const fullName = document.getElementById("fullName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const age = document.getElementById("age").value.trim();
+      const gender = document.getElementById("gender").value;
+
+      const [firstname, ...rest] = fullName.split(" ");
+      const lastname = rest.pop() || "";
+      const middlename = rest.join(" ");
+
+      try {
+        await updateDoc(doc(db, "registrationForm", userDocId), {
+          firstname,
+          middlename,
+          lastname,
+          email,
+          phone,
+          age,
+          gender
+        });
+        document.getElementById("cardName").textContent = `${firstname} ${middlename} ${lastname}`;
+        alert("User details updated");
+      } catch (error) {
+        console.error("Error saving details:", error);
+      }
+    });
+
+    const logoutBtn = document.getElementById("logout");
+    logoutBtn?.addEventListener("click", () => {
+      localStorage.removeItem("loggedInUsername");
+      alert("You have been logged out.");
+      window.location.href = "../index.html";
+    });
+  </script>
 </body>
 </html>

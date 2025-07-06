@@ -215,7 +215,7 @@
                 profileImage.src = "../assets/img/profile-icon.png";
             }
         } catch (err) {
-            console.error("🔥 Error fetching profile image:", err);
+            console.error("Error fetching profile image:", err);
             profileImage.src = "../assets/img/profile-icon.png";
         }
 
@@ -230,7 +230,7 @@
                 const step1Data = sessionStorage.getItem('appointmentStep1');
 
                 if (!step1Data) {
-                    alert("❌ Step 1 data not found. Please start from Step 1.");
+                    alert("Step 1 data not found. Please start from Step 1.");
                     window.location.href = 'appointment.html';
                     return; // Exit the function early
                 }
@@ -240,7 +240,7 @@
                     appointmentData = JSON.parse(step1Data);
                 } catch (parseError) {
                     console.error("Error parsing Step 1 data:", parseError);
-                    alert("❌ Invalid Step 1 data. Please start from Step 1.");
+                    alert("Invalid Step 1 data. Please start from Step 1.");
                     window.location.href = 'appointment.html';
                     return;
                 }
@@ -293,14 +293,14 @@
                 sessionStorage.removeItem('appointmentStep1');
                 sessionStorage.removeItem('appointmentStep2');
 
-                    alert("✅ Appointment booking successful!");
+                    alert("Appointment booking successful!");
                     document.getElementById('details').reset();
 
                     // Redirect to dashboard or confirmation page
                     window.location.href = 'dashboard.html';
 
                 } catch (err) {
-                console.error("❌ Appointment booking error:", err);
+                console.error("Appointment booking error:", err);
                 alert("Something went wrong. Please try again.");
                 }
                 });
@@ -308,7 +308,7 @@
                 // Logout Button
                 logoutBtn?.addEventListener("click", () => {
                     localStorage.removeItem("loggedInUsername");
-                    alert("👋 You have been logged out.");
+                    alert("You have been logged out.");
                     window.location.href = "../index.html";
                 });
 
@@ -328,7 +328,7 @@
                 timestamp: serverTimestamp()
             });
         } catch (err) {
-            console.error("❌ Failed to log activity:", err);
+            console.error("Failed to log activity:", err);
         }
     }
     </script>

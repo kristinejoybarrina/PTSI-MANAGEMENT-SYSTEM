@@ -397,6 +397,7 @@ input[type="time"] {
   /* Flexible margins */
   margin: 20px auto;
   max-width: 800px;
+  min-width: 300px;
   width: calc(100% - 80px); /* Some padding from screen edges */
   box-sizing: border-box;
   transition: all 0.3s ease-in-out;
@@ -422,6 +423,7 @@ input[type="time"] {
 
   .main-content {
     margin-left: 0;
+    padding: 50px 10px;
   }
 
   .header {
