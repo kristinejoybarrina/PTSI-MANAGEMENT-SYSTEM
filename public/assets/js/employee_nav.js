@@ -113,6 +113,11 @@
         const hamburger = document.getElementById('hamburger');
         const mainContent = document.querySelector('.main-content');
 
+        // Hide hamburger by default on page load
+        if (hamburger) {
+            hamburger.style.display = 'none';
+        }
+
         // Check if sidebar state is saved in localStorage
         const sidebarState = localStorage.getItem('sidebarCollapsed');
         if (sidebarState === 'true') {
