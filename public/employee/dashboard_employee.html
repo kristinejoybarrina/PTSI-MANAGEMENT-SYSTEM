@@ -21,6 +21,50 @@
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
+        .dashboard-main {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .calendar-container {
+            flex: 2;
+            min-width: 300px;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-stats {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .stat-card p {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
         
         .upcoming-tasks {
             background: #ffffff;
@@ -50,18 +94,30 @@
             color: #666;
             font-size: 0.9rem;
         }
+
+        #calendarAdmin {
+            width: 100%;
+            min-height: 400px;
+        }
         
-        @media (min-width: 768px) {
+        @media (max-width: 768px) {
             .dashboard-content {
-                flex-direction: row;
-                flex-wrap: wrap;
+                flex-direction: column;
             }
             
-            .welcome-section {
+/*             .welcome-section {
                 flex: 1 1 100%;
+            } */
+
+            .calendar-container {
+                flex: none;
+            }
+
+            .dashboard-stats {
+                flex: none;
             }
             
-            .calendar-container {
+/*             .calendar-container {
                 flex: 2;
                 margin-right: 20px;
             }
@@ -69,7 +125,7 @@
             .upcoming-tasks {
                 flex: 1;
                 min-width: 300px;
-            }
+            } */
         }
     </style>
 </head>
@@ -101,27 +157,30 @@
                     <img src="../assets/img/hamburger-icon.png" alt="Menu"/>
                 </div>
                 <div class="labresult-title"><strong>Dashboard</strong></div>
-            </div></div>
+            </div>
+        </div>
 
         <div class="dashboard-content">
             <div class="welcome-section">
                 <h1>Welcome, <span id="employeeName">Employee</span>!</h1>
                 <p>Here's what's happening today.</p>
             </div>
-    <div class="dashboard-content">
-        <div class="calendar-container">
-            <div id="calendarAdmin"></div>
-        </div>
+            <div class="dashboard-main">
+                <div class="calendar-container">
+                    <h2>Calendar</h2>
+                    <div id="calendarAdmin"></div>
+                </div>
 
-        <div class="dashboard-stats">
-            </div>
-            <div class="stat-card">
-                <h3>Appointments Today</h3>
-                <p id="todaysAppointments">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>Pending Results</h3>
-                <p id="pendingResults">0</p>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Appointments Today</h3>
+                        <p id="todaysAppointments">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending Results</h3>
+                        <p id="pendingResults">0</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -164,7 +223,7 @@
             document.getElementById('pendingResults').textContent = '3';
         }
 
-                // Close modal when clicking outside the modal content
+        // Close modal when clicking outside the modal content
         window.addEventListener('click', function(event) {
             const modal = document.getElementById('appointmentModal');
             if (event.target === modal) {
